@@ -107,6 +107,23 @@ public class SalesDto {
     }
 
     @Getter
+    @NoArgsConstructor @AllArgsConstructor
+    public static class tete<T>{
+        @ApiModelProperty(notes = "2019-04-14 같은 형태.")
+        private LocalDate date;
+        private int sales;
+
+        public Sales toEntity(){
+            return Sales.builder()
+                    .date(date)
+                    .reservationCnt(0)
+                    .sales(sales)
+                    .saleType(SaleType.OFFLINE)
+                    .build();
+        }
+    }
+
+    @Getter
     @NoArgsConstructor
     public static class DeleteSale{
         @ApiModelProperty(notes = "2019-04-14 같은 형태.")

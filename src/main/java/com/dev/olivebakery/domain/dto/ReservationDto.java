@@ -4,39 +4,40 @@ import com.dev.olivebakery.domain.entity.Sales;
 import com.dev.olivebakery.domain.enums.ReservationType;
 import com.dev.olivebakery.domain.enums.SaleType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by YoungMan on 2019-03-06.
- * breadInfo : 빵이름, 개수
  */
 
-@SuppressWarnings("Duplicates")
 public class ReservationDto {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class GetResponse {
+	public static class ReservationResponse {
 
 		private Long reservationId;
 
-		@JsonFormat(pattern = "YYYY-MM-dd HH:mm")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
 		private LocalDateTime reservationTime;
 
-		@JsonFormat(pattern = "YYYY-MM-dd HH:mm")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
 		private LocalDateTime bringTime;
 		private int price;
 		private String memberName;
 		private List<ReservationBread> reservationBreads = new ArrayList<>();
 
 		@Builder
-		public GetResponse(Long reservationId, LocalDateTime reservationTime, LocalDateTime bringTime, int price, String memberName, List<ReservationBread> reservationBreads) {
+		public ReservationResponse(Long reservationId, LocalDateTime reservationTime, LocalDateTime bringTime, int price, String memberName, List<ReservationBread> reservationBreads) {
 			this.reservationId = reservationId;
 			this.reservationTime = reservationTime;
 			this.bringTime = bringTime;
@@ -45,20 +46,20 @@ public class ReservationDto {
 			this.reservationBreads = reservationBreads;
 		}
 
-		public static GetResponse build(GetTemp getTemp, List<ReservationBread> reservationBreads) {
-			return GetResponse.builder()
-					.reservationId(getTemp.getReservationId())
-					.reservationTime(getTemp.getReservationTime())
-					.bringTime(getTemp.getBringTime())
-					.price(getTemp.getPrice())
-					.memberName(getTemp.getMemberName())
+		public static ReservationResponse of(ReservationResponseTemp reservationResponseTemp, List<ReservationBread> reservationBreads) {
+			return ReservationResponse.builder()
+					.reservationId(reservationResponseTemp.getReservationId())
+					.reservationTime(reservationResponseTemp.getReservationTime())
+					.bringTime(reservationResponseTemp.getBringTime())
+					.price(reservationResponseTemp.getPrice())
+					.memberName(reservationResponseTemp.getMemberName())
 					.reservationBreads(reservationBreads)
 					.build();
 		}
 
 		@Override
 		public String toString() {
-			return "GetResponse{" +
+			return "ReservationResponse{" +
 					"reservationId=" + reservationId +
 					", reservationTime=" + reservationTime +
 					", bringTime=" + bringTime +
@@ -72,7 +73,7 @@ public class ReservationDto {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PUBLIC)
-	public static class GetTemp {
+	public static class ReservationResponseTemp {
 
 		private Long reservationId;
 		private LocalDateTime reservationTime;
@@ -83,7 +84,7 @@ public class ReservationDto {
 		private int breadCount;
 
 		@Builder
-		public GetTemp(Long reservationId, LocalDateTime reservationTime, LocalDateTime bringTime, int price, String memberName, String breadName, int breadCount) {
+		public ReservationResponseTemp(Long reservationId, LocalDateTime reservationTime, LocalDateTime bringTime, int price, String memberName, String breadName, int breadCount) {
 			this.reservationId = reservationId;
 			this.reservationTime = reservationTime;
 			this.bringTime = bringTime;
@@ -95,7 +96,7 @@ public class ReservationDto {
 
 		@Override
 		public String toString() {
-			return "GetTemp{" +
+			return "ReservationResponseTemp{" +
 					"reservationId=" + reservationId +
 					", reservationTime=" + reservationTime +
 					", bringTime=" + bringTime +
@@ -121,10 +122,10 @@ public class ReservationDto {
 			this.breadCount = breadCount;
 		}
 
-		public static ReservationBread build(GetTemp getTemp) {
+		public static ReservationBread of(ReservationResponseTemp reservationResponseTemp) {
 			return ReservationBread.builder()
-					.breadName(getTemp.getBreadName())
-					.breadCount(getTemp.getBreadCount())
+					.breadName(reservationResponseTemp.getBreadName())
+					.breadCount(reservationResponseTemp.getBreadCount())
 					.build();
 		}
 
@@ -135,58 +136,84 @@ public class ReservationDto {
 					", breadCount=" + breadCount +
 					'}';
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			ReservationBread that = (ReservationBread) o;
+			return breadCount == that.breadCount &&
+					Objects.equals(breadName, that.breadName);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(breadName, breadCount);
+		}
 	}
 
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class SaveRequest {
+	public static class ReservationSaveRequest {
 
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 		private LocalDateTime bringTime;
 		private String userEmail;
-		private LinkedHashMap<String, Integer> breadInfo;
+		private List<ReservationBread> breadInfo = new ArrayList<>();
 
 		@Builder
-		public SaveRequest(LocalDateTime bringTime, String userEmail, LinkedHashMap<String, Integer> breadInfo) {
+		public ReservationSaveRequest(LocalDateTime bringTime, String userEmail, List<ReservationBread> breadInfo) {
 			this.bringTime = bringTime;
 			this.userEmail = userEmail;
 			this.breadInfo = breadInfo;
 		}
 
+		@ApiModelProperty(hidden = true)
 		public List<String> getBreadNames() {
-			return new ArrayList<>(breadInfo.keySet());
+			return breadInfo.stream()
+					.map(s -> s.getBreadName())
+					.collect(Collectors.toList());
 		}
 
+		@ApiModelProperty(hidden = true)
 		public List<Integer> getBreadCounts() {
-			return new ArrayList<>(breadInfo.values());
+			return breadInfo.stream()
+					.map(s -> s.getBreadCount())
+					.collect(Collectors.toList());
 		}
 	}
 
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class UpdateRequest {
+	public static class ReservationUpdateRequest {
 
 		private Long reservationId;
-		private SaveRequest saveDto;
+		private ReservationSaveRequest reservationSaveRequest;
 
 		@Builder
-		public UpdateRequest(Long reservationId, SaveRequest saveDto) {
+		public ReservationUpdateRequest(Long reservationId, ReservationSaveRequest reservationSaveRequest) {
 			this.reservationId = reservationId;
-			this.saveDto = saveDto;
+			this.reservationSaveRequest = reservationSaveRequest;
 		}
 	}
 
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class DateRequest {
+	public static class ReservationDateRequest {
 
 		private ReservationType reservationType;
+
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+		@ApiModelProperty(notes = "2019-04-14 같은 형태.")
 		private LocalDate selectDate;
 
 		@Builder
-		public DateRequest(ReservationType reservationType, LocalDate selectDate) {
+		public ReservationDateRequest(ReservationType reservationType, LocalDate selectDate) {
 			this.reservationType = reservationType;
 			this.selectDate = selectDate;
 		}
@@ -195,14 +222,22 @@ public class ReservationDto {
 
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
-	public static class DateRangeRequest {
+	public static class ReservationDateRangeRequest {
 
 		private ReservationType reservationType;
+
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+		@ApiModelProperty(notes = "2019-04-14 같은 형태.")
 		private LocalDate startDate;
+
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+		@ApiModelProperty(notes = "2019-04-14 같은 형태.")
 		private LocalDate endDate;
 
 		@Builder
-		public DateRangeRequest(ReservationType reservationType, LocalDate startDate, LocalDate endDate) {
+		public ReservationDateRangeRequest(ReservationType reservationType, LocalDate startDate, LocalDate endDate) {
 			this.reservationType = reservationType;
 			this.startDate = startDate;
 			this.endDate = endDate;
@@ -225,7 +260,7 @@ public class ReservationDto {
 			this.date = LocalDate.now();
 		}
 
-		public Sales toEntity(){
+		public Sales toEntity() {
 			return Sales.builder()
 					.date(date)
 					.reservationCnt((int) reservationCount)

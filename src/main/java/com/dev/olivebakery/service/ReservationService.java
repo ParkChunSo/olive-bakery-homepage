@@ -26,7 +26,6 @@ import static com.dev.olivebakery.domain.dto.ReservationDto.*;
  * Created by YoungMan on 2019-02-09.
  */
 
-@SuppressWarnings("Duplicates")
 @RequiredArgsConstructor
 @Service
 public class ReservationService {
@@ -42,18 +41,18 @@ public class ReservationService {
 	}
 
 	@Explain("예약 정보 저장")
-	public void saveReservation(SaveRequest saveDto) {
+	public void saveReservation(ReservationSaveRequest saveDto) {
 		timeValidationCheck(saveDto.getBringTime());
 		reservationInfoRepository.saveAll(convertSaveDtoToEntity(saveDto));
 	}
 
 	@Explain("saveReservation 의 서브함수")
-	private List<ReservationInfo> convertSaveDtoToEntity(SaveRequest saveDto) {
+	private List<ReservationInfo> convertSaveDtoToEntity(ReservationSaveRequest saveDto) {
 
 		List<ReservationInfo> reservationInfos = new ArrayList<>();
 		List<Bread> breads = breadService.findsByNames(saveDto.getBreadNames());
 		Member member = signService.findById(saveDto.getUserEmail());
-		int finalPrice = breadService.getFinalPrice(saveDto.getBreadInfo());
+		int finalPrice = breadService.getFinalPrice(saveDto.getBreadNames(), saveDto.getBreadCounts());
 
 		Reservation reservation = Reservation.builder()
 				.bringTime(saveDto.getBringTime())
@@ -73,9 +72,9 @@ public class ReservationService {
 	}
 
 	@Explain("예약 정보 수정")
-	public void updateReservation(UpdateRequest updateRequest) {
-		deleteReservation(updateRequest.getReservationId());
-		saveReservation(updateRequest.getSaveDto());
+	public void updateReservation(ReservationUpdateRequest reservationUpdateRequest) {
+		deleteReservation(reservationUpdateRequest.getReservationId());
+		saveReservation(reservationUpdateRequest.getReservationSaveRequest());
 	}
 
 	@Explain("예약 정보 삭제")
@@ -91,39 +90,39 @@ public class ReservationService {
 	}
 
 	@Explain("유저의 모든 예약내역을 예약타입별로 가져옴 ")
-	public List<GetResponse> getReservationInfos(String email, ReservationType reservationType) {
-		List<GetTemp> getTemps = reservationRepository.getReservationInfos(email, reservationType);
-		return convertGetTempDtoListToGetDtoList(getTemps);
+	public List<ReservationResponse> getReservationInfos(String email, ReservationType reservationType) {
+		List<ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfos(email, reservationType);
+		return convertGetTempDtoListToGetDtoList(reservationResponseTemps);
 	}
 
 	@Explain("유저의 가장 최근 예약내역을 예약타입에 무관하게 조회")
-	public GetResponse getReservationInfoByRecently(String email) {
-		List<GetTemp> getTemps = reservationRepository.getReservationInfoByRecently(email);
-		return convertGetTmpDtoToGetDto(getTemps);
+	public ReservationResponse getReservationInfoByRecently(String email) {
+		List<ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfoByRecently(email);
+		return convertGetTmpDtoToGetDto(reservationResponseTemps);
 	}
 
 	@Explain("날짜별 예약 조회, Admin 에서 사용")
-	public List<GetResponse> getReservationInfosByDate(DateRequest dateRequest) {
-		LocalDateTime startDate = dateRequest.getSelectDate().atStartOfDay();
-		LocalDateTime endDate = dateRequest.getSelectDate().atTime(23, 59, 59);
+	public List<ReservationResponse> getReservationInfosByDate(ReservationDateRequest reservationDateRequest) {
+		LocalDateTime startDate = reservationDateRequest.getSelectDate().atStartOfDay();
+		LocalDateTime endDate = reservationDateRequest.getSelectDate().atTime(23, 59, 59);
 
-		List<GetTemp> getTemps = reservationRepository.getReservationInfosByDate(dateRequest.getReservationType(), startDate, endDate);
-		return convertGetTempDtoListToGetDtoList(getTemps);
+		List<ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfosByDate(reservationDateRequest.getReservationType(), startDate, endDate);
+		return convertGetTempDtoListToGetDtoList(reservationResponseTemps);
 	}
 
 	@Explain("날짜구간별 예약 조회, Admin 에서 사용")
-	public List<GetResponse> getReservationInfosByDateRange(DateRangeRequest dateRangeRequest) {
-		LocalDateTime startDate = dateRangeRequest.getStartDate().atStartOfDay();
-		LocalDateTime endDate = dateRangeRequest.getEndDate().atTime(23, 59, 59);
+	public List<ReservationResponse> getReservationInfosByDateRange(ReservationDateRangeRequest reservationDateRangeRequest) {
+		LocalDateTime startDate = reservationDateRangeRequest.getStartDate().atStartOfDay();
+		LocalDateTime endDate = reservationDateRangeRequest.getEndDate().atTime(23, 59, 59);
 
-		List<GetTemp> getTemps = reservationRepository.getReservationInfosByDate(dateRangeRequest.getReservationType(), startDate, endDate);
-		return convertGetTempDtoListToGetDtoList(getTemps);
+		List<ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfosByDate(reservationDateRangeRequest.getReservationType(), startDate, endDate);
+		return convertGetTempDtoListToGetDtoList(reservationResponseTemps);
 	}
 
 	@Explain("수령시간은 매일 아침 8시 ~ 저녁 8시 사이// 예약시간보다 늦을 수는 없다")
 	public void timeValidationCheck(LocalDateTime bringTime) {
 		Predicate<LocalDateTime> predicate = b -> b.isAfter(LocalDateTime.now()) && b.getHour() > 8 && b.getHour() < 20;
-		if(!predicate.test(bringTime)) {
+		if (!predicate.test(bringTime)) {
 			throw new UserDefineException(bringTime.toString() + "  수령시간이 올바르지 않습니다.");
 		}
 	}
@@ -135,49 +134,49 @@ public class ReservationService {
 		LocalDateTime endDate = LocalDate.now().atTime(23, 59, 59);
 		ReservationSale reservationSale = reservationRepository.getReservationSaleByDate(ReservationType.COMPLETE, startDate, endDate);
 
-		if(ObjectUtils.isEmpty(reservationSale)) {
+		if (ObjectUtils.isEmpty(reservationSale)) {
 			throw new UserDefineException("예약 내역이 없습니다");
 		}
 		salesService.saveReservationSale(reservationSale);
 	}
 
-	@Explain("GetTemp 를 GetResponse 로 변환")
-	private GetResponse convertGetTmpDtoToGetDto(List<GetTemp> getTemps) {
+	@Explain("ReservationResponseTemp 를 ReservationResponse 로 변환")
+	private ReservationResponse convertGetTmpDtoToGetDto(List<ReservationResponseTemp> reservationResponseTemps) {
 
 		List<ReservationBread> reservationBreads = new ArrayList<>();
 
-		for (GetTemp getTemp : getTemps) {
-			reservationBreads.add(ReservationBread.build(getTemp));
+		for (ReservationResponseTemp reservationResponseTemp : reservationResponseTemps) {
+			reservationBreads.add(ReservationBread.of(reservationResponseTemp));
 		}
-		return GetResponse.build(getTemps.get(0), reservationBreads);
+		return ReservationResponse.of(reservationResponseTemps.get(0), reservationBreads);
 	}
 
 	@Explain("GetTempDto List 를 GetDto List 로 변환")
-	public List<GetResponse> convertGetTempDtoListToGetDtoList(List<GetTemp> getTemps) {
+	public List<ReservationResponse> convertGetTempDtoListToGetDtoList(List<ReservationResponseTemp> reservationResponseTemps) {
 
-		List<GetResponse> getResponses = new ArrayList<>();
+		List<ReservationResponse> reservationRespons = new ArrayList<>();
 		List<ReservationBread> reservationBreads = new ArrayList<>();
-		Long reservationId = getTemps.get(0).getReservationId();
+		Long reservationId = reservationResponseTemps.get(0).getReservationId();
 
-		for (GetTemp getTemp : getTemps) {
-			if (getTemp.getReservationId().equals(reservationId)) {
-				reservationBreads.add(ReservationBread.build(getTemp));
+		for (ReservationResponseTemp reservationResponseTemp : reservationResponseTemps) {
+			if (reservationResponseTemp.getReservationId().equals(reservationId)) {
+				reservationBreads.add(ReservationBread.of(reservationResponseTemp));
 
-				if (getTemps.indexOf(getTemp) == getTemps.size() - 1) {
-					getResponses.add(GetResponse.build(getTemps.get(getTemps.indexOf(getTemp)), reservationBreads));
+				if (reservationResponseTemps.indexOf(reservationResponseTemp) == reservationResponseTemps.size() - 1) {
+					reservationRespons.add(ReservationResponse.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp)), reservationBreads));
 				}
 				continue;
 			}
-			getResponses.add(GetResponse.build(getTemps.get(getTemps.indexOf(getTemp) - 1), reservationBreads));
+			reservationRespons.add(ReservationResponse.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp) - 1), reservationBreads));
 
-			reservationId = getTemp.getReservationId();
+			reservationId = reservationResponseTemp.getReservationId();
 			reservationBreads = new ArrayList<>();
-			reservationBreads.add(ReservationBread.build(getTemp));
+			reservationBreads.add(ReservationBread.of(reservationResponseTemp));
 
-			if (getTemps.indexOf(getTemp) == getTemps.size() - 1) {
-				getResponses.add(GetResponse.build(getTemps.get(getTemps.indexOf(getTemp)), reservationBreads));
+			if (reservationResponseTemps.indexOf(reservationResponseTemp) == reservationResponseTemps.size() - 1) {
+				reservationRespons.add(ReservationResponse.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp)), reservationBreads));
 			}
 		}
-		return getResponses;
+		return reservationRespons;
 	}
 }

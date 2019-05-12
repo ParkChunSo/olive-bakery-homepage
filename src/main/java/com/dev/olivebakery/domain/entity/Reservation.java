@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -33,8 +34,10 @@ public class Reservation {
     private Long reservationId;
 
     @CreationTimestamp
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime reservationTime;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime bringTime;
 
     private Integer price;

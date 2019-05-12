@@ -15,7 +15,7 @@ public class ShoppingService {
                     .description(bread.getDescription())
                     .picturePath(bread.getPicturePath())
                     .price(bread.getPrice())
-                    .star(bread.getStar()).build();
+                    .star(bread.getStar()).of();
             breadDtos.add(breadDto);
         }
         return breadDtos;
@@ -32,7 +32,7 @@ public class ShoppingService {
             ReviewDto reviewDto = ReviewDto.builder()
                     .userName(review.getMember().getName())
                     .content(review.getContent())
-                    .date(review.getDate()).build();
+                    .date(review.getDate()).of();
 
             reviewDtos.add(reviewDto);
         }

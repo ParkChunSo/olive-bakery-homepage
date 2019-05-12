@@ -3,12 +3,16 @@ package com.dev.olivebakery.domain.entity;
 import com.dev.olivebakery.domain.dto.BoardDto;
 import com.dev.olivebakery.domain.enums.BoardType;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +28,11 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
 
-    @CreatedDate
-    private Timestamp insertTime;
+    @CreationTimestamp
+    private LocalDateTime insertTime;
 
-    @LastModifiedDate
-    private Timestamp updateTime;
+    @UpdateTimestamp
+    private LocalDateTime updateTime;
 
     private String title;
 

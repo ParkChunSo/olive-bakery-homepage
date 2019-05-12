@@ -1,11 +1,15 @@
 package com.dev.olivebakery.service;
 
 import com.dev.olivebakery.domain.dto.ReservationDto;
+import com.dev.olivebakery.domain.entity.Bread;
+import com.dev.olivebakery.domain.entity.Member;
 import com.dev.olivebakery.domain.enums.ReservationType;
+import com.dev.olivebakery.repository.BreadRepository;
+import com.dev.olivebakery.repository.MemberRepository;
 import com.dev.olivebakery.repository.ReservationRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +18,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by YoungMan on 2019-04-08.
@@ -31,7 +39,13 @@ public class ReservationServiceTest {
 	@Autowired
 	ReservationService reservationService;
 
-	Gson gson = new GsonBuilder()
+	@Autowired
+	MemberRepository memberRepository;
+
+	@Autowired
+	BreadRepository breadRepository;
+
+	private Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
 			.create();
 
@@ -39,17 +53,32 @@ public class ReservationServiceTest {
 	public void saveReservation() throws Exception {
 
 		//given
+		Member member = Member.builder()
+				.email("chunso@email.com")
+				.build();
+		memberRepository.save(member);
+
+		Bread bread1 = Bread.builder()
+				.name("bread1")
+				.price(10000)
+				.build();
+		Bread bread2 = Bread.builder()
+				.name("bread2")
+				.price(20000)
+				.build();
+		breadRepository.saveAll(Arrays.asList(bread1, bread2));
+
 		LinkedHashMap<String, Integer> maps = new LinkedHashMap<>();
-		maps.put("소보로빵", 4);//빵-개수
-		maps.put("죽빵", 6);//빵-개수
+		maps.put("bread1", 4);
+		maps.put("bread2", 6);
 
 		LocalDateTime bringTime = LocalDate.now()
 				.plusDays(1)
-				.atTime(9,9,9);
+				.atTime(9, 9, 9);
 
 		ReservationDto.SaveRequest saveRequest = ReservationDto.SaveRequest.builder()
 				.bringTime(bringTime)
-				.userEmail("chunso@email.com")
+				.userEmail(member.getEmail())
 				.breadInfo(maps)
 				.build();
 
@@ -57,31 +86,45 @@ public class ReservationServiceTest {
 		reservationService.saveReservation(saveRequest);
 	}
 
+
 	@Test
 	public void updateReservationType() {
 	}
 
 	@Test
-	public void getReservationInfos() throws Exception, JsonProcessingException {
+	public void getReservationInfos() throws Exception {
 
 		//given
-		final String email = "testemail";
+		saveReservation();
+		final String email = "chunso@email.com";
 		final ReservationType reservationType = ReservationType.REQUEST;
 
 		//when
 		List<ReservationDto.GetResponse> getResponses = reservationService.getReservationInfos(email, reservationType);
 
-		//then
 		for (ReservationDto.GetResponse s : getResponses) {
 			System.out.println(gson.toJson(s));
 		}
+
+		List<String> lit = Arrays.asList("1", "2");
+		Assert.assertThat(lit, hasItem("1"));
+
+		List<ReservationDto.ReservationBread> expectedBreads = Arrays.asList(
+				new ReservationDto.ReservationBread("bread1", 4),
+				new ReservationDto.ReservationBread("bread2", 6)
+		);
+
+		//then
+		Assert.assertThat(2, is(getResponses.get(0).getReservationBreads().size()));
+		Assert.assertThat(getResponses.get(0).getPrice(), is(160000));
+		Assert.assertThat(getResponses.get(0).getReservationBreads(), is(expectedBreads));
 	}
 
 	@Test
 	public void getReservationInfoRecently() throws Exception {
 
 		//given
-		final String email = "testemail";
+		final String email = "chunso@email.com";
 
 		//when
 		ReservationDto.GetResponse getResponse = reservationService.getReservationInfoByRecently(email);
@@ -129,13 +172,13 @@ public class ReservationServiceTest {
 		//given
 		LocalDateTime validBringTime = LocalDate.now()
 				.plusDays(1)
-				.atTime(12,12,12);
+				.atTime(12, 12, 12);
 
 		LocalDateTime unValidBringTimeByBefore = LocalDateTime.now()
 				.minusHours(3);
 
 		LocalDateTime unValidBringTimeByEfter20 = LocalDate.now()
-				.atTime(20,20,20);
+				.atTime(20, 20, 20);
 
 		//then
 		reservationService.timeValidationCheck(validBringTime);
