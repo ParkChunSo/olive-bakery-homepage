@@ -45,6 +45,13 @@ public class BreadGetService {
         this.breadImageRepository = breadImageRepository;
     }
 
+    public List<BreadDto.BreadGetAll> getAllBread(){
+
+        List<Bread> breads = breadRepository.findAll();
+
+        return breads2BreadGetAll(breads);
+    }
+
     // 요일 별 빵 가져오기
     public List<BreadDto.BreadGetAll> getBreadByDay(String selectedDay){
 

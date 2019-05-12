@@ -19,5 +19,6 @@ public interface BreadRepository extends JpaRepository<Bread, Long> {
     @Query("select b from Bread b where b.name = :name and b.deleteFlag = false")
     Optional<Bread> findByName(@Param(value="name")String name);
 
+
     List<Bread> findByNameIn(List<String> breadName);
 }

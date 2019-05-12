@@ -66,6 +66,7 @@ public class BreadSaveService {
                 .price(breadSave.getPrice())
                 .description(breadSave.getDescription())
                 .detailDescription(breadSave.getDetailDescription())
+                .isSoldOut(false)
                 .deleteFlag(false)
                 .build();
     }
@@ -101,7 +102,7 @@ public class BreadSaveService {
         imageFile.transferTo(destinationFile);
 
         String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/olive/image/" + fileName)
+                .path("/olive/bread/image/" + fileName)
                 .toUriString();
 
         BreadImage breadImage = BreadImage.builder()

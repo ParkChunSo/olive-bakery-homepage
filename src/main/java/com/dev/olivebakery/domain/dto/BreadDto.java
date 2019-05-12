@@ -15,12 +15,14 @@ import java.util.List;
 public class BreadDto {
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor
     public static class BreadIngredient{
         private String name;
         private String origin;
+        private boolean exist;
     }
 
     @Getter
@@ -113,6 +115,17 @@ public class BreadDto {
     public static class BreadUpdateSoldOut {
         private String name;
         private Boolean isSoldOut;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @Builder
+    @AllArgsConstructor
+    public static class BreadUpdateIngredients {
+        private String name;
+        private List<BreadIngredient> ingredientsList = new ArrayList<>();
+
+
     }
 
 }

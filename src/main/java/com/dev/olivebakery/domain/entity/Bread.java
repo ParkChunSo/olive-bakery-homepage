@@ -91,4 +91,8 @@ public class Bread {
     public void deleteBread(boolean delete){
         this.deleteFlag = delete;
     }
+
+    public void addBreadIngredients(Ingredients ingredients) {
+        this.ingredients.add(ingredients);
+    }
 }
