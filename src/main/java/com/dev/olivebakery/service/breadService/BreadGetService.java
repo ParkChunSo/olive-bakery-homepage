@@ -14,6 +14,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+
 public class BreadGetService {
 
     private BreadRepository breadRepository;
@@ -36,13 +41,24 @@ public class BreadGetService {
     private BreadImageRepository breadImageRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BreadGetService.class);
-    private static final String IMAGE_PATH = "C:\\Users\\Kimyunsang\\Desktop\\spring\\imageTest\\";
+    //private static final String IMAGE_PATH = "C:\\Users\\Kimyunsang\\Desktop\\spring\\imageTest\\";
 
+
+    private static final String IMAGE_PATH_KEY = "resources.image-locations";
+    @Autowired
+    private Environment environment;
 
     public BreadGetService(BreadRepository breadRepository, DaysRepository daysRepository, BreadImageRepository breadImageRepository){
         this.breadRepository = breadRepository;
         this.daysRepository = daysRepository;
         this.breadImageRepository = breadImageRepository;
+    }
+
+    public List<BreadDto.BreadGetAll> getAllBread(){
+
+        List<Bread> breads = breadRepository.findAll();
+
+        return breads2BreadGetAll(breads);
     }
 
     // 요일 별 빵 가져오기
@@ -146,12 +162,11 @@ public class BreadGetService {
         return ingredientDtoList;
     }
 
-
     public byte[] getImageResource(String image) throws IOException {
 
         byte[] result = null;
         try {
-            File file = new File(IMAGE_PATH + image + ".jpg");
+            File file = new File(environment.getProperty(IMAGE_PATH_KEY) + image + ".jpg");
 
             InputStream in = new FileInputStream(file);
 

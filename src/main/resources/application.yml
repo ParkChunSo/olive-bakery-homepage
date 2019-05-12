@@ -18,6 +18,7 @@ spring:
     url: jdbc:mysql://chunsodb.c04b2rx0gbkh.ap-northeast-2.rds.amazonaws.com:3306/olive_bakery?useSSL=false&serverTimezone=Asia/Seoul
     username: chunso
     password: alswjd96
+    
   servlet:
     multipart:
       max-file-size: 1MB
@@ -29,8 +30,11 @@ spring:
       enabled: true
       force: true
 
-  resources:
-    static-locations: file:///C:\Users\Kimyunsang\Desktop\spring\imageTest
+
+resources:
+  image-locations: /home/ec2-user/img
+  #image-locations: C:\Users\Kimyunsang\Desktop\spring\imageTest
+  image-url: 15.164.57.47:8080
 
 logging:
   level:

@@ -52,6 +52,13 @@ public class BreadController {
         this.breadUpdateService = breadUpdateService;
     }
 
+    @ApiOperation("모든 빵 정보 가져오기")
+    @GetMapping()
+    public List<BreadDto.BreadGetAll> getAllBread(){
+
+        return breadGetService.getAllBread();
+    }
+
     @ApiOperation("요일별 빵 정보 가져오기")
     @GetMapping("/day/{day}")
     public List<BreadDto.BreadGetAll> getBread(@PathVariable String day){
@@ -77,7 +84,6 @@ public class BreadController {
     @ApiOperation("빵, 이미지 같이 저장 모델 명세")
     @PostMapping("/test")
     public void saveBreadAndImageTest( BreadDto.BreadSave breadSave) {
-
     }
 
     @ApiOperation("빵 이름 수정")
@@ -128,6 +134,26 @@ public class BreadController {
 
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
                 .body(breadGetService.getImageResource(image));
+
     }
+
+    @ApiOperation("빵 성분 추가")
+    @PutMapping("/ingredient/add")
+    public void addIngredient(@RequestBody BreadDto.BreadUpdateIngredients breadUpdateIngredients){
+
+        logger.info(breadUpdateIngredients.getIngredientsList().get(0).getName());
+
+        breadUpdateService.addBreadIngredients(breadUpdateIngredients);
+    }
+
+    @ApiOperation("빵 성분 삭제")
+    @DeleteMapping("/ingredient/delete")
+    public void deleteIngredient(@RequestBody BreadDto.BreadUpdateIngredients breadUpdateIngredients){
+
+        logger.info(breadUpdateIngredients.getIngredientsList().get(0).getName());
+
+        breadUpdateService.deleteBreadIngredients(breadUpdateIngredients);
+    }
+
 
 }
