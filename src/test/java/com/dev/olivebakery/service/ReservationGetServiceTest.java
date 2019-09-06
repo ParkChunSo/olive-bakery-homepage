@@ -79,7 +79,7 @@
 //	public void getReservationInfos_예약목록_조회() throws Exception {
 //
 //		//given
-//		final String email = "test@test.com";
+//		final String id = "test@test.com";
 //		final ReservationType reservationType = ReservationType.REQUEST;
 //		List<ReservationDto.ReservationBread> expectedBreads = Arrays.asList(
 //				new ReservationDto.ReservationBread("소보로빵", 3),
@@ -88,7 +88,7 @@
 //		);
 //
 //		//when
-//		List<ReservationDto.ReservationResponse> reservationResponses = reservationGetService.getReservationInfos(email, reservationType);
+//		List<ReservationDto.ReservationResponse> reservationResponses = reservationGetService.getReservationInfos(id, reservationType);
 //
 //		//then
 //		assertThat(reservationResponses.get(0).getReservationBreads().size(), is(3));
@@ -101,14 +101,14 @@
 //	public void getReservationInfoRecently_최신예약_한건_조회() throws Exception {
 //
 //		//given
-//		final String email = "signTest@gmail.com";
+//		final String id = "signTest@gmail.com";
 //		List<ReservationDto.ReservationBread> expectedBreads = Arrays.asList(
 //				new ReservationDto.ReservationBread("소보로빵", 1),
 //				new ReservationDto.ReservationBread("죽빵", 2)
 //		);
 //
 //		//when
-//		ReservationDto.ReservationResponse reservationResponse = reservationGetService.getReservationInfoByRecently(email);
+//		ReservationDto.ReservationResponse reservationResponse = reservationGetService.getReservationInfoByRecently(id);
 //
 //		//then
 //		assertThat(reservationResponse.getReservationBreads().size(), is(2));

@@ -24,7 +24,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 			"join reservationinfos.bread bread " +
 			"where memeber.email = :email and reservation.reservationType = :reservationType " +
 			"order by reservation.reservationId desc")
-	List<ReservationDto.ReservationResponseTemp> getReservationInfos(@Param("email") String email, @Param("reservationType") ReservationType reservationType);
+	List<ReservationDto.ReservationResponseTemp> getReservationInfos(@Param("id") String email, @Param("reservationType") ReservationType reservationType);
 
 
 	@Query(value = "select new com.dev.olivebakery.domain.dtos.ReservationDto$ReservationResponseTemp(reservation.reservationId, reservation.reservationTime, reservation.bringTime, reservation.price, memeber.name, " +
@@ -35,7 +35,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 			"join reservationinfos.bread bread " +
 			"where reservation.reservationId = (select max(reservation.reservationId) from Reservation reservation join reservation.member mem where mem.email = :email) " +
 			"order by reservation.reservationId desc")
-	List<ReservationDto.ReservationResponseTemp> getReservationInfoByRecently(@Param("email") String email);
+	List<ReservationDto.ReservationResponseTemp> getReservationInfoByRecently(@Param("id") String email);
 
 
 	@Query(value = "select new com.dev.olivebakery.domain.dtos.ReservationDto$ReservationResponseTemp(reservation.reservationId, reservation.reservationTime, reservation.bringTime, reservation.price, memeber.name, " +

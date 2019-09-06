@@ -1,6 +1,6 @@
 package com.dev.olivebakery.controller;
 
-import com.dev.olivebakery.domain.dtos.SignDto;
+import com.dev.olivebakery.domain.dtos.sign.SignUpRequestDto;
 import com.dev.olivebakery.domain.entity.Member;
 import com.dev.olivebakery.repository.MemberRepository;
 import com.dev.olivebakery.security.JwtProvider;
@@ -36,7 +36,7 @@ public class SignControllerTest {
     @MockBean
     private SignService signService;
     private ObjectMapper om = new ObjectMapper();
-    private String userName = "signTest@email.com";
+    private String userName = "signTest@id.com";
     private String password = "1234";
     private String name = "박춘소";
     private String phoneNumber = "010-0000-0000";
@@ -45,7 +45,7 @@ public class SignControllerTest {
 
     @Before
     public void init(){
-        Member member = memberRepository.findByEmail(userName).orElse(null);
+        Member member = memberRepository.findById(userName).orElse(null);
         if(member != null)
             memberRepository.delete(member);
     }
@@ -55,8 +55,8 @@ public class SignControllerTest {
         mvc.perform(post("/olive/sign/client")
                 .content(om.writeValueAsString(
 
-                        SignDto.SignUp.builder()
-                                .email(userName)
+                        SignUpRequestDto.builder()
+                                .id(userName)
                                 .pw(password)
                                 .name(name)
                                 .phoneNumber(phoneNumber)
@@ -73,8 +73,8 @@ public class SignControllerTest {
         mvc.perform(post("/olive/sign/client")
                         .content(om.writeValueAsString(
 
-                                    SignDto.SignUp.builder()
-                                    .email(userName)
+                                SignUpRequestDto.builder()
+                                    .id(userName)
                                     .pw(password)
                                     .name(name)
                                     .phoneNumber(phoneNumber)

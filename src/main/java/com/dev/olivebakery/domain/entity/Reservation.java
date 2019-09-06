@@ -42,7 +42,7 @@ public class Reservation {
     private ReservationType reservationType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "uuid")
     private Member member;
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

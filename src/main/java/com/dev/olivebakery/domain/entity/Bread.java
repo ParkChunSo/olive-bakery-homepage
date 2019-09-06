@@ -12,9 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//TODO 빵이 지금 판매되고 있는지
-
-
 @Entity
 @Table(name = "bread_tbl")
 @Getter

@@ -21,7 +21,7 @@ public class Favorite {
     private Long favoriteId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "uuid")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
