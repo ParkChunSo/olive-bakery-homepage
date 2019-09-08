@@ -1,6 +1,8 @@
 package com.dev.olivebakery.service.reservationService;
 
-import com.dev.olivebakery.domain.dtos.ReservationDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationBreadDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationInfoListResponseDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationInfoListTmpDto;
 import com.dev.olivebakery.exception.UserDefineException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -16,50 +18,50 @@ import java.util.List;
 public class ReservationConverterService {
 
 	/**
-	 * ReservationResponseTemp -> ReservationResponse
+	 * List<ReservationInfoListTmpDto> -> ReservationInfoListResponseDto
 	 */
-	public static ReservationDto.ReservationResponse convertGetTmpDtoToGetDto(List<ReservationDto.ReservationResponseTemp> reservationResponseTemps) {
+	public static ReservationInfoListResponseDto convertGetTmpDtoToGetDto(List<ReservationInfoListTmpDto> reservationResponseTemps) {
 
 		if(ObjectUtils.isEmpty(reservationResponseTemps)) {
 			throw new UserDefineException("예약 내역이 없습니다.");
 		}
-		List<ReservationDto.ReservationBread> reservationBreads = new ArrayList<>();
+		List<ReservationBreadDto> reservationBreads = new ArrayList<>();
 
-		for (ReservationDto.ReservationResponseTemp reservationResponseTemp : reservationResponseTemps) {
-			reservationBreads.add(ReservationDto.ReservationBread.of(reservationResponseTemp));
+		for (ReservationInfoListTmpDto reservationResponseTemp : reservationResponseTemps) {
+			reservationBreads.add(ReservationBreadDto.of(reservationResponseTemp));
 		}
-		return ReservationDto.ReservationResponse.of(reservationResponseTemps.get(0), reservationBreads);
+		return ReservationInfoListResponseDto.of(reservationResponseTemps.get(0), reservationBreads);
 	}
 
 	/**
-	 * List<GetTempDto> -> List<GetDto>
+	 * List<ReservationInfoListTmpDto> -> List<ReservationInfoListResponseDto>
 	 */
-	public static List<ReservationDto.ReservationResponse> convertGetTempDtoListToGetDtoList(List<ReservationDto.ReservationResponseTemp> reservationResponseTemps) {
+	public static List<ReservationInfoListResponseDto> convertGetTempDtoListToGetDtoList(List<ReservationInfoListTmpDto> reservationResponseTemps) {
 
-		List<ReservationDto.ReservationResponse> reservationResponses = new ArrayList<>();
-		List<ReservationDto.ReservationBread> reservationBreads = new ArrayList<>();
+		List<ReservationInfoListResponseDto> reservationResponses = new ArrayList<>();
+		List<ReservationBreadDto> reservationBreads = new ArrayList<>();
 		Long reservationId = reservationResponseTemps.get(0).getReservationId();
 
-		for (ReservationDto.ReservationResponseTemp reservationResponseTemp : reservationResponseTemps) {
+		for (ReservationInfoListTmpDto reservationResponseTemp : reservationResponseTemps) {
 			if (reservationResponseTemp.getReservationId().equals(reservationId)) {
-				reservationBreads.add(ReservationDto.ReservationBread.of(reservationResponseTemp));
+				reservationBreads.add(ReservationBreadDto.of(reservationResponseTemp));
 
 				if (reservationResponseTemps.indexOf(reservationResponseTemp) == reservationResponseTemps.size() - 1) {
-					reservationResponses.add(ReservationDto.ReservationResponse.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp)),
+					reservationResponses.add(ReservationInfoListResponseDto.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp)),
 							reservationBreads)
 					);
 				}
 				continue;
 			}
-			reservationResponses.add(ReservationDto.ReservationResponse.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp) - 1),
+			reservationResponses.add(ReservationInfoListResponseDto.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp) - 1),
 					reservationBreads));
 
 			reservationId = reservationResponseTemp.getReservationId();
 			reservationBreads = new ArrayList<>();
-			reservationBreads.add(ReservationDto.ReservationBread.of(reservationResponseTemp));
+			reservationBreads.add(ReservationBreadDto.of(reservationResponseTemp));
 
 			if (reservationResponseTemps.indexOf(reservationResponseTemp) == reservationResponseTemps.size() - 1) {
-				reservationResponses.add(ReservationDto.ReservationResponse.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp)),
+				reservationResponses.add(ReservationInfoListResponseDto.of(reservationResponseTemps.get(reservationResponseTemps.indexOf(reservationResponseTemp)),
 						reservationBreads)
 				);
 			}

@@ -1,6 +1,7 @@
 package com.dev.olivebakery.service.reservationService;
 
-import com.dev.olivebakery.domain.dtos.ReservationDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationSaveRequestDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationUpdateRequestDto;
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.domain.entity.Reservation;
 import com.dev.olivebakery.domain.entity.ReservationInfo;
@@ -39,7 +40,7 @@ public class ReservationSaveService {
 	/**
 	 * 시간 체크 후 예약 정보 저장
 	 */
-	public void saveReservation(ReservationDto.ReservationSaveRequest saveDto, String bearerToken) {
+	public void saveReservation(ReservationSaveRequestDto saveDto, String bearerToken) {
 		timeValidationCheck(saveDto.getBringTime());
 		Reservation reservation = getReservationBySaveDto(saveDto, jwtProvider.getUserEmailByToken(bearerToken));
 		List<ReservationInfo> reservationInfos = getReservationInfos(saveDto, reservation);
@@ -60,7 +61,7 @@ public class ReservationSaveService {
 	/**
 	 * ReservationSaveRequestDto -> Reservation 으로 변환
 	 */
-	private Reservation getReservationBySaveDto(ReservationDto.ReservationSaveRequest saveDto, String email) {
+	private Reservation getReservationBySaveDto(ReservationSaveRequestDto saveDto, String email) {
 		return Reservation.of(saveDto.getBringTime(),
 				memberRepository.findById(email).orElseThrow(() -> new UserDefineException("해당 유저가 존재하지 않습니다.")),
 				getTotalPrice(saveDto.getBreadNames(), saveDto.getBreadCounts())
@@ -110,7 +111,7 @@ public class ReservationSaveService {
 	/**
 	 * ReservationSaveRequest 와 Reservation -> List<ReservationInfo>
 	 */
-	private List<ReservationInfo> getReservationInfos(ReservationDto.ReservationSaveRequest saveDto, Reservation reservation) {
+	private List<ReservationInfo> getReservationInfos(ReservationSaveRequestDto saveDto, Reservation reservation) {
 		List<ReservationInfo> reservationInfos = new ArrayList<>();
 		List<Bread> breads = findsByNames(saveDto.getBreadNames());
 
@@ -126,12 +127,12 @@ public class ReservationSaveService {
 	 * 예약 수정
 	 */
 	@Transactional
-	public void updateReservation(ReservationDto.ReservationUpdateRequest reservationUpdateRequest, String bearerToken) {
-		String findEmail = reservationRepository.getMemberEmailByReservationId(reservationUpdateRequest.getReservationId());
+	public void updateReservation(ReservationUpdateRequestDto reservationUpdateRequest, String bearerToken) {
+		String findEmail = reservationRepository.getMemberIdByReservationId(reservationUpdateRequest.getReservationId());
 		checkValidateEmail(findEmail, bearerToken);
 
 		Reservation reservation = findById(reservationUpdateRequest.getReservationId());
-		ReservationDto.ReservationSaveRequest saveRequest = reservationUpdateRequest.getReservationSaveRequest();
+		ReservationSaveRequestDto saveRequest = reservationUpdateRequest.getReservationSaveRequest();
 
 		timeValidationCheck(saveRequest.getBringTime());
 		reservation.updateBringTime(saveRequest.getBringTime());
@@ -168,6 +169,4 @@ public class ReservationSaveService {
 				.map(i -> i.getReservationInfoId())
 				.collect(Collectors.toList());
 	}
-
-
 }

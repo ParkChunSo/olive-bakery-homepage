@@ -1,6 +1,6 @@
 package com.dev.olivebakery.controller;
 
-import com.dev.olivebakery.domain.dtos.ReservationDto;
+import com.dev.olivebakery.domain.dtos.reservation.*;
 import com.dev.olivebakery.domain.enums.ReservationType;
 import com.dev.olivebakery.service.reservationService.ReservationDeleteService;
 import com.dev.olivebakery.service.reservationService.ReservationGetService;
@@ -32,8 +32,8 @@ public class ReservationController {
 			@ApiImplicitParam(name = "type", value = "예약타입", required = true),
 	})
 	@GetMapping("/user/type/{type}")
-	public List<ReservationDto.ReservationResponse> getReservationInfos(@PathVariable("type") ReservationType reservationType,
-																		@RequestHeader(name = "Authorization") String bearerToken) {
+	public List<ReservationInfoListResponseDto> getReservationInfos(@PathVariable("type") ReservationType reservationType,
+																	@RequestHeader(name = "Authorization") String bearerToken) {
 
 		return reservationGetService.getReservationInfos(reservationType, bearerToken);
 	}
@@ -41,7 +41,7 @@ public class ReservationController {
 
 	@ApiOperation(value = "유저의 가장 최근 예약 내역 조회", notes = "유저의 가장 최근 예약내역을 예약타입에 무관하게 조회")
 	@GetMapping("/user/recently")
-	public ReservationDto.ReservationResponse getReservationInfosByDate(@RequestHeader(name = "Authorization") String bearerToken) {
+	public ReservationInfoListResponseDto getReservationInfosByDate(@RequestHeader(name = "Authorization") String bearerToken) {
 		return reservationGetService.getReservationInfoByRecently(bearerToken);
 	}
 
@@ -52,7 +52,7 @@ public class ReservationController {
 			@ApiImplicitParam(name = "date", value = "2019-04-14 형태", required = true)
 	})
 	@PostMapping("/date")
-	public List<ReservationDto.ReservationResponse> getReservationInfosByDate(@RequestBody ReservationDto.ReservationDateRequest request,
+	public List<ReservationInfoListResponseDto> getReservationInfosByDate(@RequestBody ReservationDateRequestDto request,
 																			  @RequestHeader(name = "Authorization") String bearerToken) {
 
 		return reservationGetService.getReservationInfosByDate(request, bearerToken);
@@ -66,7 +66,7 @@ public class ReservationController {
 			@ApiImplicitParam(name = "endDate", value = "끝날짜, 2019-04-14 형태", required = true)
 	})
 	@PostMapping("/date/range")
-	public List<ReservationDto.ReservationResponse> getReservationInfosByDateRange(@RequestBody ReservationDto.ReservationDateRangeRequest request,
+	public List<ReservationInfoListResponseDto> getReservationInfosByDateRange(@RequestBody ReservationDateRangeRequestDto request,
 																				   @RequestHeader(name = "Authorization") String bearerToken) {
 
 		return reservationGetService.getReservationInfosByDateRange(request, bearerToken);
@@ -80,7 +80,7 @@ public class ReservationController {
 			@ApiImplicitParam(name = "breadCount", value = "예약 빵의 개수", required = true)
 	})
 	@PostMapping
-	public void saveReservation(@RequestBody ReservationDto.ReservationSaveRequest request,
+	public void saveReservation(@RequestBody ReservationSaveRequestDto request,
 								@RequestHeader(name = "Authorization") String bearerToken) {
 
 		reservationSaveService.saveReservation(request, bearerToken);
@@ -89,7 +89,7 @@ public class ReservationController {
 
 	@ApiOperation("예약정보 수정")
 	@PutMapping
-	public void updateReservation(@RequestBody ReservationDto.ReservationUpdateRequest request,
+	public void updateReservation(@RequestBody ReservationUpdateRequestDto request,
 								  @RequestHeader(name = "Authorization") String bearerToken) {
 
 		reservationSaveService.updateReservation(request, bearerToken);

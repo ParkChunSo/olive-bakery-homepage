@@ -1,6 +1,9 @@
 package com.dev.olivebakery.service.reservationService;
 
-import com.dev.olivebakery.domain.dtos.ReservationDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationDateRangeRequestDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationDateRequestDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationInfoListResponseDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationInfoListTmpDto;
 import com.dev.olivebakery.domain.entity.Reservation;
 import com.dev.olivebakery.domain.enums.MemberRole;
 import com.dev.olivebakery.domain.enums.ReservationType;
@@ -31,44 +34,43 @@ public class ReservationGetService {
 		return reservationRepository.findById(reservationId).orElseThrow(() -> new UserDefineException("해당 예약내역이 없습니다."));
 	}
 
-
 	/**
 	 * 유저의 모든 예약내역을 예약타입별로 가져옴
 	 */
-	public List<ReservationDto.ReservationResponse> getReservationInfos(ReservationType reservationType, String bearerToken) {
+	public List<ReservationInfoListResponseDto> getReservationInfos(ReservationType reservationType, String bearerToken) {
 		String email = jwtProvider.getUserEmailByToken(bearerToken);
-		List<ReservationDto.ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfos(email,
+		List<ReservationInfoListTmpDto> reservationInfoListTmpDtoList = reservationRepository.getReservationInfoList(email,
 				reservationType);
 
-		if(ObjectUtils.isEmpty(reservationResponseTemps)) {
+		if(ObjectUtils.isEmpty(reservationInfoListTmpDtoList)) {
 			return new ArrayList<>();
 		}
-		return ReservationConverterService.convertGetTempDtoListToGetDtoList(reservationResponseTemps);
+		return ReservationConverterService.convertGetTempDtoListToGetDtoList(reservationInfoListTmpDtoList);
 	}
 
 	/**
 	 * 유저의 가장 최근 예약내역을 예약타입에 무관하게 조회
 	 */
-	public ReservationDto.ReservationResponse getReservationInfoByRecently(String bearerToken) {
+	public ReservationInfoListResponseDto getReservationInfoByRecently(String bearerToken) {
 		String email = jwtProvider.getUserEmailByToken(bearerToken);
-		List<ReservationDto.ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfoByRecently(email);
+		List<ReservationInfoListTmpDto> infoListTmpDtoList = reservationRepository.getReservationInfoListByRecentlyDate(email);
 
-		if(ObjectUtils.isEmpty(reservationResponseTemps)) {
-			return new ReservationDto.ReservationResponse();
+		if(ObjectUtils.isEmpty(infoListTmpDtoList)) {
+			return new ReservationInfoListResponseDto();
 		}
-		return ReservationConverterService.convertGetTmpDtoToGetDto(reservationResponseTemps);
+		return ReservationConverterService.convertGetTmpDtoToGetDto(infoListTmpDtoList);
 	}
 
 	/**
 	 * 날짜별 예약 조회, Admin 에서 Role
 	 */
-	public List<ReservationDto.ReservationResponse> getReservationInfosByDate(ReservationDto.ReservationDateRequest reservationDateRequest,
-																			  String bearerToken) {
+	public List<ReservationInfoListResponseDto> getReservationInfosByDate(ReservationDateRequestDto reservationDateRequest,
+																		  String bearerToken) {
 		checkValidateRole(bearerToken);
-		List<ReservationDto.ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfosByDate(
-				reservationDateRequest.getReservationType(),
+		List<ReservationInfoListTmpDto> reservationResponseTemps = reservationRepository.getReservationInfoListByDate(
 				DateUtils.getStartOfDay(reservationDateRequest.getSelectDate()),
-				DateUtils.getEndOfDay(reservationDateRequest.getSelectDate())
+				DateUtils.getEndOfDay(reservationDateRequest.getSelectDate()),
+				reservationDateRequest.getReservationType()
 		);
 
 		if(ObjectUtils.isEmpty(reservationResponseTemps)) {
@@ -80,13 +82,13 @@ public class ReservationGetService {
 	/**
 	 * 날짜구간별 예약 조회, Admin Role
 	 */
-	public List<ReservationDto.ReservationResponse> getReservationInfosByDateRange(ReservationDto.ReservationDateRangeRequest reservationDateRangeRequest,
-																				   String bearerToken) {
+	public List<ReservationInfoListResponseDto> getReservationInfosByDateRange(ReservationDateRangeRequestDto reservationDateRangeRequest,
+																			   String bearerToken) {
 		checkValidateRole(bearerToken);
-		List<ReservationDto.ReservationResponseTemp> reservationResponseTemps = reservationRepository.getReservationInfosByDate(
-				reservationDateRangeRequest.getReservationType(),
+		List<ReservationInfoListTmpDto> reservationResponseTemps = reservationRepository.getReservationInfoListByDate(
 				DateUtils.getStartOfDay(reservationDateRangeRequest.getStartDate()),
-				DateUtils.getEndOfDay(reservationDateRangeRequest.getEndDate())
+				DateUtils.getEndOfDay(reservationDateRangeRequest.getEndDate()),
+				reservationDateRangeRequest.getReservationType()
 		);
 
 		if(ObjectUtils.isEmpty(reservationResponseTemps)) {

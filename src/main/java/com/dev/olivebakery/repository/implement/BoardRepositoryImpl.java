@@ -85,7 +85,7 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport implements Bo
     }
 
     private JPAQuery<PostListResponseDto> setQuery(JPAQuery<PostListResponseDto> query){
-        return query.select(Projections.constructor(PostListResponseDto.class, board.boardId, board.insertTime, board.updateTime, board.title, board.context, board.isNotice, board.isSecret, member.email))
+        return query.select(Projections.constructor(PostListResponseDto.class, board.boardId, board.insertTime, board.updateTime, board.title, board.context, board.isNotice, board.isSecret, member.id))
                     .from(board)
                     .join(board.member, member);
     }
