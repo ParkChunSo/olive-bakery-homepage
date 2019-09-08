@@ -32,6 +32,9 @@ public class SignService {
         this.jwtProvider = jwtProvider;
     }
 
+    /**
+     * 로그인 후 토큰 전송
+     */
     public String signIn(SignInRequestDto signInDto){
 
         log.info("----login --- " + signInDto.getId() + "  " + signInDto.getPw());
@@ -46,6 +49,9 @@ public class SignService {
         return jwtProvider.createToken(member.getId(), member.getRole());
     }
 
+    /**
+     * 회원가입 후 토큰 전송
+     */
     public String signUp(SignUpRequestDto signupDto, String ROLE){
         if(memberRepository.findById(signupDto.getId()).isPresent())
             throw new UserDefineException("아이디가 중복됩니다.");
@@ -62,6 +68,9 @@ public class SignService {
         return jwtProvider.createToken(member.getId(), member.getRole());
     }
 
+    /**
+     * 회원정보 수정
+     */
     public void update(SignUpRequestDto signupDto) {
         Member member = memberRepository.findById(signupDto.getId())
                 .orElseThrow(() -> new UserDefineException("아이디가 존재하지 않습니다."));
@@ -69,6 +78,9 @@ public class SignService {
         memberRepository.save(member.update(signupDto));
     }
 
+    /**
+     * 회원 탈퇴
+     */
     public void delete(SignInRequestDto signInDto) {
         Member member = memberRepository.findById(signInDto.getId())
                 .orElseThrow(() -> new UserDefineException("아이디를 잘못 입력하셨습니다."));
@@ -83,6 +95,9 @@ public class SignService {
                 .orElseThrow(() -> new UserDefineException("해당 유저가 존재하지 않습니다."));
     }
 
+    /**
+     * 토큰을 사용한 회원의 상세정보 조회
+     */
     public MemberDetailsResponseDto getMemberDetailsByToken(String bearerToken) {
         Member member = memberRepository.findById(jwtProvider.getUserEmailByToken(bearerToken))
                 .orElseThrow(() -> new UserDefineException("아이디가 존재하지 않습니다."));
@@ -98,6 +113,9 @@ public class SignService {
                 ;
     }
 
+    /**
+     * 권한을 사용한 회원의 상세정보 조회
+     */
     public MemberDetailsResponseDto getMemberDetailsByRole(String userId) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new UserDefineException("아이디가 존재하지 않습니다."));
@@ -113,6 +131,9 @@ public class SignService {
                 ;
     }
 
+    /**
+     * 모든 회원정보 조회
+     */
     public List<MemberListResponseDto> getMembersInfo() {
         List<Member> members = memberRepository.findAll();
         List<MemberListResponseDto> memberDtos = new ArrayList<>();

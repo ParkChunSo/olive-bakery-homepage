@@ -23,7 +23,7 @@ public class ReservationDeleteService {
 	 * 예약 삭제
 	 */
 	public void deleteReservation(Long reservationId, String bearerToken) {
-		String findEmail = reservationRepository.getMemberEmailByReservationId(reservationId);
+		String findEmail = reservationRepository.getMemberIdByReservationId(reservationId);
 		String tokenEmail = jwtProvider.getUserEmailByToken(bearerToken);
 		checkValidateEmail(findEmail, tokenEmail);
 

@@ -15,7 +15,7 @@ spring:
 #    ignored: /swagger-resources/**
 
   datasource:
-    url: jdbc:mysql://chunsodb.c04b2rx0gbkh.ap-northeast-2.rds.amazonaws.com:3306/olive_bakery?useSSL=false&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://chunsodb.c04b2rx0gbkh.ap-northeast-2.rds.amazonaws.com:3306/olive_bakery_test?useSSL=false&serverTimezone=Asia/Seoul
     username: chunso
     password: alswjd96
 

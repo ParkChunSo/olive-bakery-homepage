@@ -1,6 +1,6 @@
 package com.dev.olivebakery.service.reservationService;
 
-import com.dev.olivebakery.domain.dtos.ReservationDto;
+import com.dev.olivebakery.domain.dtos.reservation.ReservationSaleTmpDto;
 import com.dev.olivebakery.domain.enums.ReservationType;
 import com.dev.olivebakery.exception.UserDefineException;
 import com.dev.olivebakery.repository.ReservationRepository;
@@ -28,9 +28,10 @@ public class ReservationSchedulerService {
 	 */
 	@Scheduled(cron = "0 0 23 * * MON-FRI")
 	public void saveReservationSaleByDate() {
-		ReservationDto.ReservationSale reservationSale = reservationRepository.getReservationSaleByDate(ReservationType.COMPLETE,
+		ReservationSaleTmpDto reservationSale = reservationRepository.getReservationSaleByDate(
 				DateUtils.getStartOfToday(),
-				DateUtils.getEndOfToday()
+				DateUtils.getEndOfToday(),
+				ReservationType.COMPLETE
 		);
 
 		if (ObjectUtils.isEmpty(reservationSale)) {
