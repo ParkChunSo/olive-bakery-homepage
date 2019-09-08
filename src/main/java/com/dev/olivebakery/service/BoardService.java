@@ -94,7 +94,7 @@ public class BoardService {
     public void updateBoard(String bearerToken,PostDetailsRequestDto updatePostDto) {
         String userId = jwtProvider.getUserEmailByToken(bearerToken);
         Board board = findBoardById(updatePostDto.getBoardId());
-        if(userId.equals(board.getMember().getEmail())  // 작성자 또는 관리자의 권한이 있어야한다.
+        if(userId.equals(board.getMember().getId())  // 작성자 또는 관리자의 권한이 있어야한다.
                 || jwtProvider.getUserRolesByToken(bearerToken).contains(MemberRole.ADMIN)) {
             board.updateBoard(updatePostDto);
             boardRepository.save(board);
@@ -110,7 +110,7 @@ public class BoardService {
     public void deleteBoard(String bearerToken,Long boardId) {
         String userId = jwtProvider.getUserEmailByToken(bearerToken);
         Board board = findBoardById(boardId);
-        if(userId.equals(board.getMember().getEmail())
+        if(userId.equals(board.getMember().getId())
                 || jwtProvider.getUserRolesByToken(bearerToken).contains(MemberRole.ADMIN)) {
             boardRepository.delete(board);
         }else{

@@ -25,9 +25,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(username)
+        Member member = memberRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        return new User(member.getEmail(), member.getPw(), makeGrantedAuthority(member.getRole()));
+        return new User(member.getId(), member.getPw(), makeGrantedAuthority(member.getRole()));
     }
 
     private Set<GrantedAuthority> makeGrantedAuthority(Set<MemberRole> roles) {

@@ -62,7 +62,7 @@ public class ReservationSaveService {
 	 */
 	private Reservation getReservationBySaveDto(ReservationDto.ReservationSaveRequest saveDto, String email) {
 		return Reservation.of(saveDto.getBringTime(),
-				memberRepository.findByEmail(email).orElseThrow(() -> new UserDefineException("해당 유저가 존재하지 않습니다.")),
+				memberRepository.findById(email).orElseThrow(() -> new UserDefineException("해당 유저가 존재하지 않습니다.")),
 				getTotalPrice(saveDto.getBreadNames(), saveDto.getBreadCounts())
 		);
 	}
@@ -161,7 +161,7 @@ public class ReservationSaveService {
 	}
 
 	/**
-	 * 예약 정보의 id 값 반환
+	 * 예약 정보의 uuid 값 반환
 	 */
 	private List<Long> getReservationInfoIds(List<ReservationInfo> reservationInfos) {
 		return reservationInfos.stream()
