@@ -2,6 +2,7 @@ package com.dev.olivebakery.repository;
 
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.domain.enums.DayType;
+import com.dev.olivebakery.repository.custom.BreadRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,7 @@ import java.util.Optional;
  */
 
 @Transactional
-public interface BreadRepository extends JpaRepository<Bread, Long> {
+public interface BreadRepository extends JpaRepository<Bread, Long>, BreadRepositoryCustom {
 
     @Query("select b from Bread b where b.name = :name and b.deleteFlag = false")
     Optional<Bread> findByName(@Param(value="name")String name);

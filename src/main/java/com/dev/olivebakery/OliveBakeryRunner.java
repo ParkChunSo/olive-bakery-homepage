@@ -37,7 +37,7 @@ public class OliveBakeryRunner implements ApplicationRunner {
         List<Bread> breads = setBreadList();
 
 //        memberRepository.saveAll(members);
-        breadRepository.saveAll(breads);
+//        breadRepository.saveAll(breads);
     }
 
     private List<Member> setMemberList(){

@@ -1,6 +1,7 @@
 package com.dev.olivebakery.controller;
 
 import com.dev.olivebakery.domain.dtos.BreadDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.service.breadService.BreadGetService;
 import com.dev.olivebakery.service.breadService.BreadSaveService;
@@ -31,6 +32,12 @@ public class BreadController {
     @GetMapping()
     public ResponseEntity<List<BreadDto.BreadGetAll>> getAllBread(){
         return ResponseEntity.ok(breadGetService.getAllBread());
+    }
+
+    @ApiOperation("금일 빵 정보 리스트 가져오기")
+    @GetMapping("/today")
+    public ResponseEntity<List<BreadListResponseDto>> getTodayBread(){
+        return ResponseEntity.ok(breadGetService.getTodayBreadList());
     }
 
     @ApiOperation("요일별 빵 정보 가져오기")
@@ -88,6 +95,7 @@ public class BreadController {
         return ResponseEntity.ok(breadUpdateService.deleteBread(name));
     }
 
+    @ApiOperation("빵 이미지 가져오기")
     @GetMapping(value = "/image/{image}",
             produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable String image) throws IOException {

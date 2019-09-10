@@ -19,4 +19,8 @@ public class Ingredients {
     private String name;
 
     private String origin;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bread_id")
+    private Bread bread;
 }

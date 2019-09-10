@@ -1,6 +1,7 @@
 package com.dev.olivebakery.service.breadService;
 
 import com.dev.olivebakery.domain.dtos.BreadDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.domain.entity.BreadImage;
 import com.dev.olivebakery.domain.entity.Days;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -31,11 +33,6 @@ public class BreadGetService {
     private final BreadImageRepository breadImageRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BreadGetService.class);
-
-    private static final String IMAGE_PATH_KEY = "resources.image-locations";
-
-    @Autowired
-    private Environment environment;
 
     public List<BreadDto.BreadGetAll> getAllBread(){
 
@@ -91,21 +88,6 @@ public class BreadGetService {
 
         return breadGetAll;
     }
-
-  /*  private void image2URL(String filePath) throws IOException {
-        URL url = new URL(filePath);
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setRequestMethod("HEAD");
-
-        logger.info("url == " + url);
-    }
-
-    private String image2Base64(String filePath) throws IOException {
-        byte[] fileContent = FileUtils.readFileToByteArray(new File(filePath));
-        String encodedString = Base64.getEncoder().encodeToString(fileContent);
-
-        return encodedString;
-    }*/
 
     private BreadDto.BreadImageDto getImageDto(Bread bread) throws IOException{
         BreadImage breadImage = breadImageRepository.findByBread(bread).get();
@@ -171,5 +153,24 @@ public class BreadGetService {
             logger.error(e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * 오늘의 빵 가져오기.
+     */
+    public List<BreadListResponseDto> getTodayBreadList() {
+        DayType[] weekDay = { DayType.SUN, DayType.MON, DayType.THU, DayType.WED
+                , DayType.THU, DayType.FRI, DayType.SAT};
+        Calendar cal = Calendar.getInstance();
+        int num = cal.get(Calendar.DAY_OF_WEEK)-1;
+
+        return breadRepository.getBreadListByDay(weekDay[num]);
+    }
+
+    /**
+     * 특정 요일의 빵 가져오기
+     */
+    public List<BreadListResponseDto> getBreadListByDay(String day) {
+        return breadRepository.getBreadListByDay(DayType.valueOf(day));
     }
 }

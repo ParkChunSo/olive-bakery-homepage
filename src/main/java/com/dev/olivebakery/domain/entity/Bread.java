@@ -45,13 +45,15 @@ public class Bread {
     private BreadState state = BreadState.NEW;
 
     // 어떤 재료가 들어가며 재료의 원산지 표기
-    @ManyToMany(fetch = FetchType.EAGER, cascade={CascadeType.PERSIST,CascadeType.MERGE})
+
+/*    @ManyToMany(fetch = FetchType.EAGER, cascade={CascadeType.PERSIST,CascadeType.MERGE})
     @JsonManagedReference
     @JoinTable(
             name = "bread_ingredients",
             joinColumns = @JoinColumn(name = "bread_id"),
             inverseJoinColumns = @JoinColumn(name = "ingredients_id")
-    )
+    )*/
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "bread")
     private List<Ingredients> ingredientsList = new ArrayList<>();
 
     // 삭제 여부
