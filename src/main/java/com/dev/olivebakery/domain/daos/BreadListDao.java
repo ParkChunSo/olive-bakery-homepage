@@ -1,20 +1,21 @@
-package com.dev.olivebakery.domain.dtos.bread;
+package com.dev.olivebakery.domain.daos;
 
 import com.dev.olivebakery.domain.enums.BreadState;
-import lombok.Builder;
+import com.dev.olivebakery.domain.enums.DayType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+@Getter
+@NoArgsConstructor
+public class BreadListDao {
+    //빵 uid
+    private Long breadId;
 
-@Getter @NoArgsConstructor
-public class BreadListResponseDto {
     //빵 이름
-    private String name;
+    private String breadName;
 
     //빵 가격
-    private Integer price;
+    private Integer breadPrice;
 
     //상세정보가 아닌 간단한 소개(리스트에서 보내줄 것)
     private String description;
@@ -23,7 +24,7 @@ public class BreadListResponseDto {
     private String detailDescription;
 
     //빵이 만들어지는 요일
-    private List<String> days = new ArrayList<>();
+    private String days;
 
     // 매진 여부
     private Boolean isSoldOut;
@@ -32,21 +33,24 @@ public class BreadListResponseDto {
     private BreadState state;
 
     // 빵을 만드는데 들어가는 재료와 각 재료의 원산지
-    private List<IngredientListResponseDto> ingredientsList = new ArrayList<>();
+    private String ingrediantName;
+
+    private String ingrediantOrigin;
 
     //빵 사진 Url주소
     private String imageUrl;
 
-    @Builder
-    public BreadListResponseDto(String name, Integer price, String description, String detailDescription, List<String> days, Boolean isSoldOut, BreadState state, List<IngredientListResponseDto> ingredientsList, String imageUrl) {
-        this.name = name;
-        this.price = price;
+    public BreadListDao(Long breadId, String breadName, Integer breadPrice, String description, String detailDescription, DayType days, Boolean isSoldOut, BreadState state, String ingrediantName, String ingrediantOrigin, String imageUrl) {
+        this.breadId = breadId;
+        this.breadName = breadName;
+        this.breadPrice = breadPrice;
         this.description = description;
         this.detailDescription = detailDescription;
-        this.days = days;
+        this.days = days.name();
         this.isSoldOut = isSoldOut;
         this.state = state;
-        this.ingredientsList = ingredientsList;
+        this.ingrediantName = ingrediantName;
+        this.ingrediantOrigin = ingrediantOrigin;
         this.imageUrl = imageUrl;
     }
 }

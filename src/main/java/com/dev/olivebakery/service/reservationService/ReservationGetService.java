@@ -10,6 +10,7 @@ import com.dev.olivebakery.domain.enums.ReservationType;
 import com.dev.olivebakery.exception.UserDefineException;
 import com.dev.olivebakery.repository.ReservationRepository;
 import com.dev.olivebakery.security.JwtProvider;
+import com.dev.olivebakery.utill.ConverterUtils;
 import com.dev.olivebakery.utill.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class ReservationGetService {
 		if(ObjectUtils.isEmpty(reservationInfoListTmpDtoList)) {
 			return new ArrayList<>();
 		}
-		return ReservationConverterService.convertGetTempDtoListToGetDtoList(reservationInfoListTmpDtoList);
+		return ConverterUtils.convertGetTempDtoListToGetDtoList(reservationInfoListTmpDtoList);
 	}
 
 	/**
@@ -58,7 +59,7 @@ public class ReservationGetService {
 		if(ObjectUtils.isEmpty(infoListTmpDtoList)) {
 			return new ReservationInfoListResponseDto();
 		}
-		return ReservationConverterService.convertGetTmpDtoToGetDto(infoListTmpDtoList);
+		return ConverterUtils.convertGetTmpDtoToGetDto(infoListTmpDtoList);
 	}
 
 	/**
@@ -76,7 +77,7 @@ public class ReservationGetService {
 		if(ObjectUtils.isEmpty(reservationResponseTemps)) {
 			return new ArrayList<>();
 		}
-		return ReservationConverterService.convertGetTempDtoListToGetDtoList(reservationResponseTemps);
+		return ConverterUtils.convertGetTempDtoListToGetDtoList(reservationResponseTemps);
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class ReservationGetService {
 		if(ObjectUtils.isEmpty(reservationResponseTemps)) {
 			return new ArrayList<>();
 		}
-		return ReservationConverterService.convertGetTempDtoListToGetDtoList(reservationResponseTemps);
+		return ConverterUtils.convertGetTempDtoListToGetDtoList(reservationResponseTemps);
 	}
 
 	private void checkValidateRole(String bearerToken) {

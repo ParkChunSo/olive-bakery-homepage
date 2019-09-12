@@ -80,10 +80,10 @@ public class BreadSaveService {
                 .price(breadSave.getPrice())
                 .description(breadSave.getDescription())
                 .detailDescription(breadSave.getDetailDescription())
-                .ingredientsList(getIngredientsListFromIngredientsDtoList(breadSave.getIngredientsList()))
+                .ingredients(getIngredientsListFromIngredientsDtoList(breadSave.getIngredientsList()))
                 .state(BreadState.NEW)
                 .isSoldOut(false)
-                .deleteFlag(false)
+                .isDeleted(false)
                 .build();
     }
 

@@ -104,11 +104,16 @@ public class BreadController {
                 .body(breadGetService.getImageResource(image));
     }
 
+    @GetMapping("/test")
+    public List<BreadListResponseDto> test(){
+        return breadGetService.getTodayBreadList();
+    }
+
 //    @ApiOperation("빵 정보에 성분 추가")
 //    @PutMapping("/ingredients/add")
 //    public ResponseEntity<HttpStatus> addIngredient(@RequestBody BreadDto.BreadUpdateIngredients breadUpdateIngredients){
 //
-//        logger.info(breadUpdateIngredients.getIngredientsList().get(0).getName());
+//        logger.info(breadUpdateIngredients.getIngredients().get(0).getName());
 //
 //        breadUpdateService.addBreadIngredients(breadUpdateIngredients);
 //
@@ -119,7 +124,7 @@ public class BreadController {
 //    @DeleteMapping("/ingredients/delete")
 //    public ResponseEntity<HttpStatus> deleteIngredient(@RequestBody BreadDto.BreadUpdateIngredients breadUpdateIngredients){
 //
-//        logger.info(breadUpdateIngredients.getIngredientsList().get(0).getName());
+//        logger.info(breadUpdateIngredients.getIngredients().get(0).getName());
 //
 //        breadUpdateService.deleteBreadIngredients(breadUpdateIngredients);
 //

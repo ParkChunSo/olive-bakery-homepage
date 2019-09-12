@@ -34,8 +34,8 @@ public class OliveBakeryRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 //        List<Member> members = setMemberList();
-        List<Bread> breads = setBreadList();
-
+//        List<Bread> breads = setBreadList();
+//
 //        memberRepository.saveAll(members);
 //        breadRepository.saveAll(breads);
     }
@@ -69,9 +69,9 @@ public class OliveBakeryRunner implements ApplicationRunner {
                   .description("올리브와 큐브치즈를 넣은 빵입니다..")
                   .detailDescription("밀가루, 효모, 물, 소금을 사용해 만든 이탈리아 빵으로, 샌드위치용 빵으로서 바게트를 대체할 목적으로 1982년 베네토(Veneto) 주 아드리아(Adria)의 아르날도 카발라리(Arnaldo Cavallari)가 개발한 빵이다.")
                   .state(BreadState.NORMAL)
-                  .ingredientsList(ingredients)
+                  .ingredients(ingredients)
                   .isSoldOut(false)
-                  .deleteFlag(false)
+                  .isDeleted(false)
                   .build()
         );
         breads.add(
@@ -81,9 +81,9 @@ public class OliveBakeryRunner implements ApplicationRunner {
                         .description("주먹만한 모닝빵 9개가 들어간 빵입니다..")
                         .detailDescription("영미권에서는 보통 Dinner Rolls라고 부르며 식사용으로도 자주 먹기 때문에 일반적인 유럽권의 주식용 빵과는 달리 고율배합이다(우유 및 유지의 비중이 높다). 대한민국의 경우 간단한 아침식사나 간식으로 즐겨 먹는 경우가 많아서 모닝빵이라는 이름이 붙었다.")
                         .state(BreadState.NORMAL)
-                        .ingredientsList(ingredients)
+                        .ingredients(ingredients)
                         .isSoldOut(false)
-                        .deleteFlag(false)
+                        .isDeleted(false)
                         .build()
         );
         breads.add(
@@ -93,9 +93,9 @@ public class OliveBakeryRunner implements ApplicationRunner {
                         .description("베이글 빵입니다.")
                         .detailDescription("밀가루 반죽을 끓는 물에 데치고 굽는 빵의 일종으로, 유대인들이 빵을 숙성할 시간이 없어서 반죽을 데친 것에서 유래했다. 실제 어원이 이디시어의 'בײגל(Beygl)'이다.")
                         .state(BreadState.NORMAL)
-                        .ingredientsList(ingredients)
+                        .ingredients(ingredients)
                         .isSoldOut(false)
-                        .deleteFlag(false)
+                        .isDeleted(false)
                         .build()
         );
 

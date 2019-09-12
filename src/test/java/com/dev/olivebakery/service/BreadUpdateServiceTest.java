@@ -34,7 +34,7 @@ public class BreadUpdateServiceTest {
 
         Optional<Bread> bread = breadRepository.findByName("식빵2");
 
-        bread.get().getIngredientsList().forEach(ingredients -> {
+        bread.get().getIngredients().forEach(ingredients -> {
             log.info("before ---"  + ingredients.getName() + "  " + ingredients.getOrigin());
         });
 
@@ -49,20 +49,20 @@ public class BreadUpdateServiceTest {
 
 //        bread.get().addBreadIngredients(Ingredients.builder().name("밀가루22").origin("한국").build());
 
-        bread.get().getIngredientsList().forEach(ingredients -> {
+        bread.get().getIngredients().forEach(ingredients -> {
             log.info("after ---"  + ingredients.getName() + "  " + ingredients.getOrigin());
         });
 
         Bread save = breadRepository.save(bread.get());
 
 
-        save.getIngredientsList().forEach(ingredients -> {
+        save.getIngredients().forEach(ingredients -> {
             log.info("save ---"  + ingredients.getName() + "  " + ingredients.getOrigin());
         });
 //
 //        Optional<Bread> bread2 = breadRepository.findByName("식빵2");
 //
-//        bread2.get().getIngredientsList().forEach(ingredients -> {
+//        bread2.get().getIngredients().forEach(ingredients -> {
 //            log.info("after save  ---"  + ingredients.getName() + "  " + ingredients.getOrigin());
 //        });
     }

@@ -1,5 +1,6 @@
 package com.dev.olivebakery.service.breadService;
 
+import com.dev.olivebakery.domain.daos.BreadListDao;
 import com.dev.olivebakery.domain.dtos.BreadDto;
 import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.entity.Bread;
@@ -11,13 +12,13 @@ import com.dev.olivebakery.exception.UserDefineException;
 import com.dev.olivebakery.repository.BreadImageRepository;
 import com.dev.olivebakery.repository.BreadRepository;
 import com.dev.olivebakery.repository.DaysRepository;
+import com.dev.olivebakery.utill.ConverterUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class BreadGetService {
         List<Bread> breads = new ArrayList<>();
 
         days.forEach(day -> {
-            if(!day.getBread().getDeleteFlag()){
+            if(!day.getBread().getIsDeleted()){
                 breads.add(day.getBread());
             }
         });
@@ -79,7 +80,7 @@ public class BreadGetService {
                                 .isSoldOut(bread.getIsSoldOut())
                                 .breadState(bread.getState())
                                 .breadImage(getImageDto(bread))
-                                .breadIngredientList(ingredientList2Dto(bread.getIngredientsList()))
+                                .breadIngredientList(ingredientList2Dto(bread.getIngredients()))
                                 .build());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -107,7 +108,7 @@ public class BreadGetService {
         Bread bread = breadRepository.findByName(name)
                 .orElseThrow(() -> new UserDefineException(name + "이란 빵은 존재하지 않습니다."));
 
-        List<BreadDto.BreadIngredient> breadIngredientList = ingredientList2Dto(bread.getIngredientsList());
+        List<BreadDto.BreadIngredient> breadIngredientList = ingredientList2Dto(bread.getIngredients());
         List<DayType> dayTypes = daysRepository.findByBread(bread);
 
         return BreadDto.BreadGetDetail.builder()
@@ -140,6 +141,7 @@ public class BreadGetService {
     public byte[] getImageResource(String image) throws IOException {
 
         BreadImage breadImage = breadImageRepository.findByBread(breadRepository.findByName(image).get()).get();
+        List<String> breadImages = breadRepository.getImagePathByBreadName(image);
         byte[] result = null;
         try {
             File file = new File(breadImage.getImagePath());
@@ -164,13 +166,17 @@ public class BreadGetService {
         Calendar cal = Calendar.getInstance();
         int num = cal.get(Calendar.DAY_OF_WEEK)-1;
 
-        return breadRepository.getBreadListByDay(weekDay[num]);
+        List<BreadListDao> breadListByDay = breadRepository.getBreadListByDay(weekDay[num]);
+        if(ObjectUtils.isEmpty(breadListByDay))
+            return new ArrayList<>();
+
+        return ConverterUtils.convertBreadDao2BreadListResponseDto(breadListByDay);
     }
 
     /**
      * 특정 요일의 빵 가져오기
      */
     public List<BreadListResponseDto> getBreadListByDay(String day) {
-        return breadRepository.getBreadListByDay(DayType.valueOf(day));
+        return ConverterUtils.convertBreadDao2BreadListResponseDto(breadRepository.getBreadListByDay(DayType.valueOf(day)));
     }
 }

@@ -19,13 +19,11 @@ import java.util.Optional;
 @Transactional
 public interface BreadRepository extends JpaRepository<Bread, Long>, BreadRepositoryCustom {
 
-    @Query("select b from Bread b where b.name = :name and b.deleteFlag = false")
+    @Query("select b from Bread b where b.name = :name and b.isDeleted = false")
     Optional<Bread> findByName(@Param(value="name")String name);
 
-    @Query("select b from Bread b where b.deleteFlag = false")
+    @Query("select b from Bread b where b.isDeleted = false")
     List<Bread> findAllByDeleteFlagIsFalse();
-
-    List<Bread> findByNameIn(List<String> breadName);
 
     @Query("select b from Bread b where b.name in :names")
     List<Bread> findAllByByNameInQuery(@Param(value = "names") List<String> names);

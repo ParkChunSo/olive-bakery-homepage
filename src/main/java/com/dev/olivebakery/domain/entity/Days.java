@@ -21,8 +21,8 @@ public class Days {
     @Enumerated(value = EnumType.STRING)
     private DayType dayType;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bread_id")
-    @JsonManagedReference
+//    @JsonManagedReference
     private Bread bread;
 }

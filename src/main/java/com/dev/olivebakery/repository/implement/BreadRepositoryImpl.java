@@ -1,19 +1,21 @@
 package com.dev.olivebakery.repository.implement;
 
-import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
-import com.dev.olivebakery.domain.dtos.bread.IngredientListResponseDto;
-import com.dev.olivebakery.domain.dtos.bread.SoldOutTmpDto;
+import com.dev.olivebakery.domain.daos.BreadListDao;
 import com.dev.olivebakery.domain.entity.*;
 import com.dev.olivebakery.domain.enums.DayType;
 import com.dev.olivebakery.repository.custom.BreadRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class BreadRepositoryImpl extends QuerydslRepositorySupport implements BreadRepositoryCustom {
     @PersistenceContext
     EntityManager entityManager;
@@ -21,33 +23,32 @@ public class BreadRepositoryImpl extends QuerydslRepositorySupport implements Br
     private QDays days = QDays.days;
     private QIngredients ingredients = QIngredients.ingredients;
     private QBreadImage breadImage = QBreadImage.breadImage;
-    private QSoldOut soldOut = QSoldOut.soldOut;
 
     public BreadRepositoryImpl(){
         super(Bread.class);
     }
 
     @Override
-    public List<BreadListResponseDto> getBreadListByDay(DayType day) {
-        JPAQuery<BreadListResponseDto> breadQuery = new JPAQuery<>(entityManager);
-        List<BreadListResponseDto> breadList = breadQuery.select(Projections.constructor(BreadListResponseDto.class, bread.name, bread.price, bread.description
-                                                                , bread.detailDescription, bread.state, breadImage.imageUrl))
-                                                    .from(bread)
-                                                    .join(bread, days.bread)
-                                                    .where(days.dayType.eq(day)).fetch();
+    public List<BreadListDao> getBreadListByDay(DayType day) {
+        JPAQuery<BreadListDao> breadQuery = new JPAQuery<>(entityManager);
+        return breadQuery.select(Projections.constructor(BreadListDao.class, bread.breadId, bread.name, bread.price, bread.description
+                                                                , bread.detailDescription, days.dayType, bread.isSoldOut, bread.state, ingredients.name, ingredients.origin, breadImage.imageUrl))
+                                            .from(bread)
+                                            .leftJoin(bread.ingredientsList, ingredients)
+                                            .leftJoin(bread.days, days)
+                                            .leftJoin(bread.images, breadImage)
+                                            .where(days.dayType.eq(day)).fetch();
+    }
 
-        JPAQuery<IngredientListResponseDto> ingredientQuery = new JPAQuery<>(entityManager);
-        ingredientQuery.select(ingredients.name, ingredients.origin)
-                .from(ingredients);
-        for(int i = 0 ; i < breadList.size() ; i++){
-            breadList.get(i).setIngredientsList(
-                ingredientQuery
-                        .where(ingredients.bread.name.eq(breadList.get(i).getName()))
-                        .fetch()
-            );
-        }
-
-        JPAQuery<SoldOutTmpDto> soldOutQuery = new JPAQuery<>(entityManager);
-        return null;
+    @Override
+    public List<String> getImagePathByBreadName(String breadName) {
+        JPAQueryFactory query = new JPAQueryFactory(entityManager);
+        Long breadId = query.select(bread.breadId).from(bread).where(bread.name.eq(breadName)).fetchOne();
+        if(breadId == null)
+            return new ArrayList<>();
+        return query.select(breadImage.imagePath)
+                .from(bread)
+                .join(bread, breadImage.bread)
+                .where(bread.breadId.eq(breadId)).fetch();
     }
 }
