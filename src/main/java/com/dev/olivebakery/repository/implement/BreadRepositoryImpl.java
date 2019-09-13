@@ -29,15 +29,22 @@ public class BreadRepositoryImpl extends QuerydslRepositorySupport implements Br
     }
 
     @Override
+    public List<BreadListDao> getAllBreadList() {
+        JPAQuery<BreadListDao> breadQuery = setQuery();
+        return breadQuery.fetch();
+    }
+
+    @Override
     public List<BreadListDao> getBreadListByDay(DayType day) {
-        JPAQuery<BreadListDao> breadQuery = new JPAQuery<>(entityManager);
-        return breadQuery.select(Projections.constructor(BreadListDao.class, bread.breadId, bread.name, bread.price, bread.description
-                                                                , bread.detailDescription, days.dayType, bread.isSoldOut, bread.state, ingredients.name, ingredients.origin, breadImage.imageUrl))
-                                            .from(bread)
-                                            .leftJoin(bread.ingredientsList, ingredients)
-                                            .leftJoin(bread.days, days)
-                                            .leftJoin(bread.images, breadImage)
-                                            .where(days.dayType.eq(day)).fetch();
+        JPAQuery<BreadListDao> breadQuery = setQuery();
+        return breadQuery.where(days.dayType.eq(day))
+                        .fetch();
+    }
+
+    @Override
+    public List<BreadListDao> getBreadByBreadName(String breadName) {
+        JPAQuery<BreadListDao> breadQuery = setQuery();
+        return breadQuery.where(bread.name.eq(breadName)).fetch();
     }
 
     @Override
@@ -50,5 +57,15 @@ public class BreadRepositoryImpl extends QuerydslRepositorySupport implements Br
                 .from(bread)
                 .join(bread, breadImage.bread)
                 .where(bread.breadId.eq(breadId)).fetch();
+    }
+
+    private JPAQuery<BreadListDao> setQuery(){
+        JPAQuery<BreadListDao> breadQuery = new JPAQuery<>(entityManager);
+        return breadQuery.select(Projections.constructor(BreadListDao.class, bread.breadId, bread.name, bread.price, bread.description
+                , bread.detailDescription, days.dayType, bread.isSoldOut, bread.state, ingredients.name, ingredients.origin, breadImage.imageUrl))
+                .from(bread)
+                .leftJoin(bread.ingredients, ingredients)
+                .leftJoin(bread.days, days)
+                .leftJoin(bread.images, breadImage);
     }
 }

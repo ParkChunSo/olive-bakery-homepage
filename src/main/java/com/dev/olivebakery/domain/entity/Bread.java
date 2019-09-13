@@ -3,6 +3,7 @@ package com.dev.olivebakery.domain.entity;
 import com.dev.olivebakery.domain.enums.BreadState;
 import lombok.*;
 import lombok.extern.java.Log;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -45,13 +46,13 @@ public class Bread {
                 joinColumns = @JoinColumn(name = "bread_id"),
                 inverseJoinColumns = @JoinColumn(name = "ingredients_id")
         )*/
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.PERSIST)
     private List<Ingredients> ingredients = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.PERSIST)
     private List<Days> days = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.PERSIST)
     private List<BreadImage> images = new ArrayList<>();
 
     // 삭제 여부

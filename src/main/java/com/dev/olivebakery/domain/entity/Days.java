@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,4 +27,14 @@ public class Days {
     @JoinColumn(name = "bread_id")
 //    @JsonManagedReference
     private Bread bread;
+
+    public static List<Days> newListInstance(List<DayType> dayTypeList){
+        List<Days> days = new ArrayList<>();
+        for(DayType type : dayTypeList){
+            days.add(
+                    Days.builder().dayType(type).build()
+            );
+        }
+        return days;
+    }
 }

@@ -18,6 +18,9 @@ public class ConverterUtils {
      * List<BreadListDao> -> List<BreadListResponseDto>
      */
     public static List<BreadListResponseDto> convertBreadDao2BreadListResponseDto(List<BreadListDao> breadList){
+        if(breadList.isEmpty())
+            return new ArrayList<>();
+
         List<BreadListResponseDto> result = new ArrayList<>();
         List<BreadListDao> tmpList = new ArrayList<>();
         Long breadId = breadList.get(0).getBreadId();
@@ -40,6 +43,9 @@ public class ConverterUtils {
      * List<BreadListDao> -> BreadListResponseDto
      */
     public static BreadListResponseDto convertBreadDaoList2BreadListResponseDto(List<BreadListDao> daos){
+        if(daos.isEmpty())
+            return new BreadListResponseDto();
+
         List<String> days = new ArrayList<>();
         List<String> ingredientName = new ArrayList<>();
         List<IngredientListResponseDto> ingredients = new ArrayList<>();
