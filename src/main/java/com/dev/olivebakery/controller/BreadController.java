@@ -2,11 +2,15 @@ package com.dev.olivebakery.controller;
 
 import com.dev.olivebakery.domain.dtos.BreadDto;
 import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadRequestDto;
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.service.breadService.BreadGetService;
 import com.dev.olivebakery.service.breadService.BreadSaveService;
 import com.dev.olivebakery.service.breadService.BreadUpdateService;
+import com.dev.olivebakery.utill.BreadRequestDtoDeserializer;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -61,6 +65,18 @@ public class BreadController {
         Bread bread = breadSaveService.saveBread(breadSave, file);
 
         return ResponseEntity.ok(bread);
+    }
+    @PostMapping("/test")
+    public void test(@RequestPart MultipartFile file,
+                     @RequestParam String json) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addDeserializer(BreadRequestDto.class, new BreadRequestDtoDeserializer());
+        objectMapper.registerModule(simpleModule);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        BreadRequestDto breadSave = objectMapper.readValue(json, BreadRequestDto.class);
+        breadSaveService.saveBread1(breadSave, file);
     }
 
     @ApiOperation("빵 정보 수정")

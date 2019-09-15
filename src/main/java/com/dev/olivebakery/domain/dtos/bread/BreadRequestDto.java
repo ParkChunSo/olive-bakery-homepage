@@ -5,6 +5,9 @@ import com.dev.olivebakery.domain.entity.Days;
 import com.dev.olivebakery.domain.entity.Ingredients;
 import com.dev.olivebakery.domain.enums.BreadState;
 import com.dev.olivebakery.domain.enums.DayType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,7 +35,19 @@ public class BreadRequestDto {
     private BreadState state = BreadState.NORMAL;
 
     // 빵을 만드는데 들어가는 재료와 각 재료의 원산지
+    @JsonProperty("ingredientsList")
     private List<IngredientListResponseDto> ingredientsList = new ArrayList<>();
+
+    @Builder
+    public BreadRequestDto(String name, Integer price, String description, String detailDescription, List<DayType> days, BreadState state, List<IngredientListResponseDto> ingredientsList) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.detailDescription = detailDescription;
+        this.days = days;
+        this.state = state;
+        this.ingredientsList = ingredientsList;
+    }
 
     public Bread toEntity(){
         return Bread.builder()

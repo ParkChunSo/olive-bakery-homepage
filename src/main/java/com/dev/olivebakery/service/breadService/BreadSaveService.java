@@ -1,12 +1,15 @@
 package com.dev.olivebakery.service.breadService;
 
 import com.dev.olivebakery.domain.dtos.BreadDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadDetailResponseDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadRequestDto;
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.domain.entity.BreadImage;
 import com.dev.olivebakery.domain.entity.Days;
 import com.dev.olivebakery.domain.entity.Ingredients;
 import com.dev.olivebakery.domain.enums.BreadState;
 import com.dev.olivebakery.domain.enums.DayType;
+import com.dev.olivebakery.exception.UserDefineException;
 import com.dev.olivebakery.repository.BreadImageRepository;
 import com.dev.olivebakery.repository.BreadRepository;
 import com.dev.olivebakery.repository.DaysRepository;
@@ -16,6 +19,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -30,7 +34,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class BreadSaveService {
 
-    private static final String IMAGE_PATH_KEY = "resources.image-locations";
+//    private static final String IMAGE_PATH_KEY = "resources.image-locations";
+    private static final String IMAGE_PATH_KEY = "C:/image/";
     @Autowired
     private Environment environment;
 
@@ -54,6 +59,20 @@ public class BreadSaveService {
         breadImageRepository.save(breadImage);
 
         return bread;
+    }
+
+    public void saveBread1(BreadRequestDto breadRequestDto, MultipartFile file){
+        if(ObjectUtils.isEmpty(breadRequestDto))
+            throw new UserDefineException("잘못된 형식의 요청입니다.");
+
+        Bread bread = breadRequestDto.toEntity();
+        breadRepository.save(bread);
+
+        try {
+            saveImage(file, bread);
+        }catch (IOException e) {
+            throw new UserDefineException("이미지 저장하는데 오류가 발생했습니다.");
+        }
     }
 
     private Bread breadSaveDto2Bread(BreadDto.BreadSave breadSave){
@@ -120,7 +139,7 @@ public class BreadSaveService {
 
     // 폴더 생성 함수
     @SuppressWarnings("unused")
-    private static String calcPath(String uploadPath) {
+    private String calcPath(String uploadPath) {
 
         Calendar cal = Calendar.getInstance();
 
@@ -136,7 +155,7 @@ public class BreadSaveService {
     }
 
     // 폴더 생성 함수
-    private static void makeDir(String uploadPath, String... paths) {
+    private void makeDir(String uploadPath, String... paths) {
 
         if (new File(uploadPath + paths[paths.length - 1]).exists()) {
             return;

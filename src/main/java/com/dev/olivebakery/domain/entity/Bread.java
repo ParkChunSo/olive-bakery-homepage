@@ -52,7 +52,7 @@ public class Bread {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.PERSIST)
     private List<Days> days = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread")
     private List<BreadImage> images = new ArrayList<>();
 
     // 삭제 여부
