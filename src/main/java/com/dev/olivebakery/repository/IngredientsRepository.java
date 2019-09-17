@@ -23,11 +23,8 @@ public interface IngredientsRepository extends JpaRepository<Ingredients, Long> 
 //    void deleteIngredientsByBread(@Param(value = "bread") Bread bread, @Param(value = "name") String name, @Param(value = "origin") String origin);
 
     Ingredients findByNameAndOrigin(String name, String origin);
-
     @Transactional
-    @Modifying
-    void deleteIngredientsByNameAndOrigin(String name, String origin);
-
+    void deleteByBread(Bread bread);
     @Override
     List<Ingredients> findAll();
 }

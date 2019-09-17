@@ -128,12 +128,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring()
-                .antMatchers(HttpMethod.POST, "/olive/sign/client")
-                .antMatchers(HttpMethod.POST, "/olive/sign")
-                .antMatchers(AUTH_ARR)
-        ;
-//        web.ignoring().antMatchers("/**");
+//        web.ignoring()
+//                .antMatchers(HttpMethod.POST, "/olive/sign/client")
+//                .antMatchers(HttpMethod.POST, "/olive/sign")
+//                .antMatchers(AUTH_ARR)
+//        ;
+        web.ignoring().antMatchers("/**");
     }
 
     @Bean

@@ -1,10 +1,11 @@
 package com.dev.olivebakery.controller;
 
-import com.dev.olivebakery.domain.dtos.BreadDto;
-import com.dev.olivebakery.domain.entity.Bread;
+import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadRequestDto;
+import com.dev.olivebakery.domain.dtos.bread.IngredientListResponseDto;
+import com.dev.olivebakery.domain.enums.BreadState;
 import com.dev.olivebakery.service.breadService.BreadGetService;
 import com.dev.olivebakery.service.breadService.BreadSaveService;
-import com.dev.olivebakery.service.breadService.BreadUpdateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -25,69 +26,73 @@ public class BreadController {
 
     private final BreadSaveService breadSaveService;
     private final BreadGetService breadGetService;
-    private final BreadUpdateService breadUpdateService;
+    private final ObjectMapper objectMapper;
 
     @ApiOperation("모든 빵 정보 가져오기")
-    @GetMapping()
-    public ResponseEntity<List<BreadDto.BreadGetAll>> getAllBread(){
-        return ResponseEntity.ok(breadGetService.getAllBread());
+    @GetMapping
+    public ResponseEntity<List<BreadListResponseDto>> getAllBread(){
+        return ResponseEntity.ok(breadGetService.getAllBreadList());
+    }
+
+    @ApiOperation("금일 빵 정보 리스트 가져오기")
+    @GetMapping("/today")
+    public ResponseEntity<List<BreadListResponseDto>> getTodayBread(){
+        return ResponseEntity.ok(breadGetService.getTodayBreadList());
     }
 
     @ApiOperation("요일별 빵 정보 가져오기")
     @GetMapping("/day/{day}")
-    public ResponseEntity<List<BreadDto.BreadGetAll>> getBread(@PathVariable String day){
-        return ResponseEntity.ok(breadGetService.getBreadByDay(day));
+    public ResponseEntity<List<BreadListResponseDto>> getBread(@PathVariable String day){
+        return ResponseEntity.ok(breadGetService.getBreadListByDay(day));
     }
 
     @ApiOperation("빵 상세정보 가져오기")
     @GetMapping("/name/{name}")
-    public ResponseEntity<BreadDto.BreadGetDetail> getDetail(@PathVariable String name){
-        return ResponseEntity.ok(breadGetService.getBreadDetails(name));
+    public ResponseEntity<BreadListResponseDto> getDetail(@PathVariable String name){
+        return ResponseEntity.ok(breadGetService.getBreadDetail(name));
+    }
+
+    @ApiOperation("빵 재료의 이름과 원산지 가져오기")
+    @GetMapping("/ingredients")
+    public ResponseEntity<List<IngredientListResponseDto>> getIngredients(){
+        return ResponseEntity.ok(breadGetService.getIngredientList());
     }
 
     @ApiOperation("빵, 이미지 같이 저장")
-    @PostMapping()
-    public ResponseEntity<Bread> saveBreadAndImage(@RequestPart MultipartFile file,
-                                                        @RequestParam String json) throws Exception{
-        ObjectMapper objectMapper = new ObjectMapper();
-        BreadDto.BreadSave breadSave = objectMapper.readValue(json, BreadDto.BreadSave.class);
-        Bread bread = breadSaveService.saveBread(breadSave, file);
-
-        return ResponseEntity.ok(bread);
-    }
-
-    @ApiOperation("빵, 이미지 같이 저장 모델 명세")
-    @PostMapping("/test")
-    public void saveBreadAndImageTest( BreadDto.BreadSave breadSave) {
+    @PostMapping
+    public void saveBreadAndImage(@RequestPart MultipartFile file,
+                                  @RequestParam String json) throws Exception{
+        BreadRequestDto breadSave = objectMapper.readValue(json, BreadRequestDto.class);
+        breadSaveService.saveBread(breadSave, file);
     }
 
     @ApiOperation("빵 정보 수정")
-    @PutMapping()
-    public ResponseEntity<Bread> updateBread(@RequestPart(name = "file", required = false) MultipartFile file,
+    @PutMapping
+    public void updateBread(@RequestPart(name = "file", required = false) MultipartFile file,
                                              @RequestParam String json) throws Exception {
-        return ResponseEntity.ok(breadUpdateService.updateBread(file, json));
+        BreadRequestDto breadSave = objectMapper.readValue(json, BreadRequestDto.class);
+        breadSaveService.updateBread(breadSave, file);
     }
 
     @ApiOperation("빵 상태 변경")
-    @PutMapping("/state")
-    public ResponseEntity<Bread> changeBreadState(@RequestBody BreadDto.BreadUpdateState breadUpdateState){
-        log.info("-----빵 상태 변경 컨트롤러");
-        return ResponseEntity.ok(breadUpdateService.updateBreadState(breadUpdateState));
+    @PutMapping("/name/{name}/state/{state}")
+    public void changeBreadState(@PathVariable String name, @PathVariable BreadState state){
+        breadSaveService.updateBreadState(name, state);
     }
 
     @ApiOperation("빵 매진 상태 변경")
-    @PutMapping("/sold_out")
-    public ResponseEntity<Bread> changeBreadSoldOut(@RequestBody  BreadDto.BreadUpdateSoldOut breadUpdateSoldOut){
-        log.info("-----빵 매진상태 변경 컨트롤러");
-        return ResponseEntity.ok(breadUpdateService.updateBreadSoldOut(breadUpdateSoldOut));
+    @PutMapping("/name/{name}/sold_out/{isSoldOut}")
+    public void changeBreadSoldOut(@PathVariable String name, @PathVariable boolean isSoldOut){
+        breadSaveService.updateBreadSoldOut(name, isSoldOut);
     }
 
     @ApiOperation("빵 삭제")
-    @DeleteMapping("/name/{name}")
-    public ResponseEntity<Bread> deleteBread(@PathVariable String name){
-        return ResponseEntity.ok(breadUpdateService.deleteBread(name));
+    @DeleteMapping("/name/{name}/delete/{delete}")
+    public void deleteBread(@PathVariable String name, @PathVariable boolean delete){
+        breadSaveService.deleteBread(name, delete);
     }
 
+    @ApiOperation("빵 이미지 가져오기")
     @GetMapping(value = "/image/{image}",
             produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable String image) throws IOException {
@@ -100,7 +105,7 @@ public class BreadController {
 //    @PutMapping("/ingredients/add")
 //    public ResponseEntity<HttpStatus> addIngredient(@RequestBody BreadDto.BreadUpdateIngredients breadUpdateIngredients){
 //
-//        logger.info(breadUpdateIngredients.getIngredientsList().get(0).getName());
+//        logger.info(breadUpdateIngredients.getIngredients().get(0).getName());
 //
 //        breadUpdateService.addBreadIngredients(breadUpdateIngredients);
 //
@@ -111,7 +116,7 @@ public class BreadController {
 //    @DeleteMapping("/ingredients/delete")
 //    public ResponseEntity<HttpStatus> deleteIngredient(@RequestBody BreadDto.BreadUpdateIngredients breadUpdateIngredients){
 //
-//        logger.info(breadUpdateIngredients.getIngredientsList().get(0).getName());
+//        logger.info(breadUpdateIngredients.getIngredients().get(0).getName());
 //
 //        breadUpdateService.deleteBreadIngredients(breadUpdateIngredients);
 //
