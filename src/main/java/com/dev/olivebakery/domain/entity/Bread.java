@@ -1,16 +1,14 @@
 package com.dev.olivebakery.domain.entity;
 
+import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.enums.BreadState;
-import com.dev.olivebakery.domain.enums.DayType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import lombok.extern.java.Log;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "bread_tbl")
@@ -37,25 +35,32 @@ public class Bread {
     //빵을 클릭했을 때 선택한 빵의 상세 소개
     private String detailDescription;
 
-    // 매진 여부
-    private Boolean isSoldOut;
-
-    // 관리자가 선정한 빵 상태(추천, 등등)
+    // 관리자가 선정한 빵 상태(추천, 등등)1
     @Enumerated(value = EnumType.STRING)
     private BreadState state = BreadState.NEW;
 
     // 어떤 재료가 들어가며 재료의 원산지 표기
-    @ManyToMany(fetch = FetchType.EAGER, cascade={CascadeType.PERSIST,CascadeType.MERGE})
-    @JsonManagedReference
-    @JoinTable(
-            name = "bread_ingredients",
-            joinColumns = @JoinColumn(name = "bread_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredients_id")
-    )
-    private List<Ingredients> ingredientsList = new ArrayList<>();
+    /*    @ManyToMany(fetch = FetchType.EAGER, cascade={CascadeType.PERSIST,CascadeType.MERGE})
+        @JsonManagedReference
+        @JoinTable(
+                name = "bread_ingredients",
+                joinColumns = @JoinColumn(name = "bread_id"),
+                inverseJoinColumns = @JoinColumn(name = "ingredients_id")
+        )*/
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    private List<Ingredients> ingredients = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    private List<Days> days = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.MERGE)
+    private List<BreadImage> images = new ArrayList<>();
 
     // 삭제 여부
-    private Boolean deleteFlag;
+    private Boolean isDeleted;
+
+    // 매진 여부
+    private Boolean isSoldOut;
 
     public void updateName(String newName){
         this.name = newName;
@@ -82,23 +87,14 @@ public class Bread {
     }
 
     public void deleteBread(boolean delete){
-        this.deleteFlag = delete;
+        this.isDeleted = delete;
     }
 
     public void updateBreadIngredients(List<Ingredients> ingredientsList) {
-        this.ingredientsList = ingredientsList;
+        this.ingredients = ingredientsList;
     }
 
-    public void addBreadIngredients(Ingredients ingredients) {
-        this.ingredientsList.add(ingredients);
-    }
-
-    public void deleteBreadIngredients(Ingredients removeIngredients){
-        this.ingredientsList.forEach(ingredients -> {
-            if(ingredients.getName().equals(removeIngredients.getName()) && ingredients.getOrigin().equals(removeIngredients.getOrigin())){
-                this.ingredientsList.remove(ingredients);
-            }
-        });
-//        this.ingredientsList.remove(ingredients);
-    }
+    public void updateDays(List<Days> days){this.days = days;}
+    public void addBreadImages(BreadImage image){this.images.add(image);}
+    public void updateBreadImages(List<BreadImage> images){this.images = images;}
 }

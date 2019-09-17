@@ -52,7 +52,7 @@ public class BreadControllerTest {
 //                .price(10000)
 //                .description("맛있는 빵")
 //                .detailDescription("자세한 맛있는 빵")
-//                .ingredientsList(breadIngredientList).build();
+//                .ingredients(breadIngredientList).build();
 //
 //        Bread bread = Bread.builder().name("치아바타").build();
 //        breadRepository.save(bread);

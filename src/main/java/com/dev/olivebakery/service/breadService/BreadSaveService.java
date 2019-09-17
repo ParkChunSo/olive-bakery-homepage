@@ -1,12 +1,17 @@
 package com.dev.olivebakery.service.breadService;
 
 import com.dev.olivebakery.domain.dtos.BreadDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadDetailResponseDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
+import com.dev.olivebakery.domain.dtos.bread.BreadRequestDto;
+import com.dev.olivebakery.domain.dtos.bread.IngredientListResponseDto;
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.domain.entity.BreadImage;
 import com.dev.olivebakery.domain.entity.Days;
 import com.dev.olivebakery.domain.entity.Ingredients;
 import com.dev.olivebakery.domain.enums.BreadState;
 import com.dev.olivebakery.domain.enums.DayType;
+import com.dev.olivebakery.exception.UserDefineException;
 import com.dev.olivebakery.repository.BreadImageRepository;
 import com.dev.olivebakery.repository.BreadRepository;
 import com.dev.olivebakery.repository.DaysRepository;
@@ -16,6 +21,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -30,8 +36,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class BreadSaveService {
 
-    //private static final String IMAGE_PATH = "C:\\Users\\Kimyunsang\\Desktop\\spring\\imageTest\\";
-
     private static final String IMAGE_PATH_KEY = "resources.image-locations";
     @Autowired
     private Environment environment;
@@ -39,133 +43,77 @@ public class BreadSaveService {
     private final BreadRepository breadRepository;
     private final IngredientsRepository ingredientsRepository;
     private final DaysRepository daysRepository;
-    private final BreadImageRepository breadImageRepository;
 
-    public Bread saveBread(BreadDto.BreadSave breadSave, MultipartFile image) throws IOException{
+    /**
+     * 빵 저장하기
+     */
+    public void saveBread(BreadRequestDto breadRequestDto, MultipartFile file){
+        if(ObjectUtils.isEmpty(breadRequestDto))
+            throw new UserDefineException("잘못된 형식의 요청입니다.");
 
-//        breadRepository.findByName(breadSave.getName())
-//                .ifPresent(bread -> {
-//                    log.info("bread ---- 존재" + bread.getName());
-//                    throw new UserDefineException("해당 이름의 빵이 이미 존재합니다.");
-//                });
-
-//        log.info("check bread name  " + checkBreadName(breadSave.getName()));
-
-        log.info("bread save ------------");
-
-        Bread bread = breadSaveDto2Bread(breadSave);
-
+        Bread bread = breadRequestDto.toEntity();
         breadRepository.save(bread);
 
-        saveDays(breadSave.getDayTypes(), bread);
-
-        BreadImage breadImage = saveImage(image, bread);
-
-        breadImageRepository.save(breadImage);
-
-        return bread;
-    }
-
-    public Boolean checkBreadName(String breadName){
-        breadRepository.findByName(breadName)
-                .ifPresent(bread -> {
-                    return;
-                });
-        return false;
-    }
-
-    private Bread breadSaveDto2Bread(BreadDto.BreadSave breadSave){
-        return Bread.builder()
-                .name(breadSave.getName())
-                .price(breadSave.getPrice())
-                .description(breadSave.getDescription())
-                .detailDescription(breadSave.getDetailDescription())
-                .ingredientsList(getIngredientsListFromIngredientsDtoList(breadSave.getIngredientsList()))
-                .state(BreadState.NEW)
-                .isSoldOut(false)
-                .deleteFlag(false)
-                .build();
-    }
-
-    public List<Ingredients> getIngredientsListFromIngredientsDtoList(List<BreadDto.BreadIngredient> breadIngredientsList) {
-        List<Ingredients> ingredientsList = new ArrayList<>();
-        breadIngredientsList.forEach(breadIngredients -> {
-            Ingredients ingredients = Optional.ofNullable(ingredientsRepository.findByNameAndOrigin(breadIngredients.getName(), breadIngredients.getOrigin()))
-                    .orElseGet(() -> ingredientsRepository.save(Ingredients.builder().name(breadIngredients.getName()).origin(breadIngredients.getOrigin()).build()));
-            ingredientsList.add(ingredients);
-        });
-
-        return ingredientsList;
-    }
-
-    public void saveDays(List<DayType> daysTypes, Bread bread){
-
-        daysTypes.forEach(dayType -> {
-            Days days = Days.builder()
-                    .bread(bread)
-                    .dayType(dayType).build();
-
-            daysRepository.save(days);
-        });
-    }
-
-    public BreadImage saveImage(MultipartFile imageFile, Bread bread) throws IOException {
-
-        UUID uid = UUID.randomUUID(); // 유니크 값 생성
-
-        String fileName = uid + "_" + imageFile.getOriginalFilename();
-
-        String savePath = calcPath(environment.getProperty(IMAGE_PATH_KEY));
-
-        File destinationFile = new File(environment.getProperty(IMAGE_PATH_KEY) + savePath, fileName);
-
-        imageFile.transferTo(destinationFile);
-
-        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/olive/bread/image/" + bread.getName())
-                .toUriString();
-
-        return BreadImage.builder()
-                .imageName(imageFile.getOriginalFilename())
-                .imageSize(imageFile.getSize())
-                .imageType(imageFile.getContentType())
-                .imageUrl(imageUrl)
-                .imagePath(environment.getProperty(IMAGE_PATH_KEY) + savePath + File.separator + fileName)
-                .current(true)
-                .bread(bread)
-                .build();
-    }
-
-    // 폴더 생성 함수
-    @SuppressWarnings("unused")
-    private static String calcPath(String uploadPath) {
-
-        Calendar cal = Calendar.getInstance();
-
-        String yearPath = File.separator + cal.get(Calendar.YEAR); // 연도 별 폴더 경로
-
-        String monthPath = yearPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.MONTH) + 1); // 월 별 폴더 경로
-
-        String datePath = monthPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.DATE)); // 일 별 폴더 경로
-
-        makeDir(uploadPath, yearPath, monthPath, datePath); // 폴더 생성
-
-        return datePath;
-    }
-
-    // 폴더 생성 함수
-    private static void makeDir(String uploadPath, String... paths) {
-
-        if (new File(uploadPath + paths[paths.length - 1]).exists()) {
-            return;
-        } // 해당 경로의 폴더가 존재하면 반환
-
-        for (String path : paths) {
-            File dirPath = new File(uploadPath + path);
-
-            if (!dirPath.exists()) {
-                dirPath.mkdir();
-            } // 해당 경로의 폴더 생성
+        bread = breadRepository.findByName(breadRequestDto.getName())
+                .orElseThrow(() -> new UserDefineException("빵을 저장하는데 오류가 발생했습니다."));
+        bread.updateBreadIngredients(Ingredients.newListInstance(bread, breadRequestDto.getIngredientsList()));
+        bread.updateDays(Days.newListInstance(bread, breadRequestDto.getDays()));
+        List<BreadImage> images = new ArrayList<>();
+        try {
+            images.add(BreadImage.of(file, bread, environment.getProperty(IMAGE_PATH_KEY)));
+            bread.updateBreadImages(images);
+        }catch (IOException e) {
+            throw new UserDefineException("이미지 저장하는데 오류가 발생했습니다.", e.getMessage());
         }
+        breadRepository.save(bread);
+    }
+
+    /**
+     * 빵 전체 정보 변경하기
+     */
+    public void updateBread(BreadRequestDto breadRequestDto, MultipartFile image) throws IOException {
+        Bread bread = breadRepository.findByName(breadRequestDto.getName())
+                .orElseThrow(() -> new UserDefineException(breadRequestDto.getName() + "이란 빵은 존재하지 않습니다."));
+
+        daysRepository.deleteByBread(bread);
+        ingredientsRepository.deleteByBread(bread);
+
+        if(!ObjectUtils.isEmpty(image))
+            bread.addBreadImages(BreadImage.of(image, bread, environment.getProperty(IMAGE_PATH_KEY)));
+
+        bread.updateBreadIngredients(Ingredients.newListInstance(bread, breadRequestDto.getIngredientsList()));
+        bread.updateDays(Days.newListInstance(bread, breadRequestDto.getDays()));
+
+        breadRepository.save(bread);
+    }
+
+    /**
+     * 빵 상태 수정하기
+     */
+    public void updateBreadState(String breadName, BreadState state){
+        Bread bread = breadRepository.findByName(breadName)
+                .orElseThrow(() -> new UserDefineException(breadName + "이란 빵은 존재하지 않습니다."));
+        bread.updateBreadState(state);
+
+        breadRepository.save(bread);
+    }
+
+    /**
+     * 빵 매진 정보 수정하기
+     */
+    public void updateBreadSoldOut(String breadName, boolean isSoldOut) {
+        Bread bread = breadRepository.findByName(breadName)
+                .orElseThrow(() -> new UserDefineException(breadName + "이란 빵은 존재하지 않습니다."));
+        bread.updateBreadSoldOut(isSoldOut);
+
+        breadRepository.save(bread);
+    }
+
+    public void deleteBread(String breadName, boolean delete){
+        Bread bread = breadRepository.findByName(breadName)
+                .orElseThrow(() -> new UserDefineException("해당 빵이 존재하지 않습니다."));
+        bread.deleteBread(delete);
+
+        breadRepository.save(bread);
     }
 }
