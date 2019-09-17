@@ -8,6 +8,7 @@ import com.dev.olivebakery.domain.enums.BoardType;
 import com.dev.olivebakery.repository.custom.BoardRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -48,7 +49,9 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport implements Bo
                 .limit(DEFAULT_LIMIT_SIZE)
         ;
         List<PostListResponseDto> boards = jpaQuery.fetch();
-        return new PageImpl<>(boards, PageRequest.of(pageNum, DEFAULT_LIMIT_SIZE, new Sort(Sort.Direction.DESC, "boardId")), boards.size());
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        long totalCount = queryFactory.select(board.boardId.count()).from(board).where(board.boardType.eq(boardType)).fetchCount();
+        return new PageImpl<>(boards, PageRequest.of(pageNum, DEFAULT_LIMIT_SIZE, new Sort(Sort.Direction.DESC, "boardId")), totalCount);
     }
 
     @Override

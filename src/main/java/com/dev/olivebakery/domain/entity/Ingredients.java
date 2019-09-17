@@ -27,11 +27,11 @@ public class Ingredients {
     @JoinColumn(name = "bread_id")
     private Bread bread;
 
-    public static List<Ingredients> newListInstance(List<IngredientListResponseDto> ingredientsList) {
+    public static List<Ingredients> newListInstance(Bread bread, List<IngredientListResponseDto> ingredientsList) {
         List<Ingredients> ret = new ArrayList<>();
         for(IngredientListResponseDto dto : ingredientsList){
             ret.add(
-                    Ingredients.builder().name(dto.getName()).origin(dto.getOrigin()).build()
+                    Ingredients.builder().name(dto.getName()).origin(dto.getOrigin()).bread(bread).build()
             );
         }
         return ret;

@@ -25,14 +25,13 @@ public class Days {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bread_id")
-//    @JsonManagedReference
     private Bread bread;
 
-    public static List<Days> newListInstance(List<DayType> dayTypeList){
+    public static List<Days> newListInstance(Bread bread, List<DayType> dayTypeList){
         List<Days> days = new ArrayList<>();
         for(DayType type : dayTypeList){
             days.add(
-                    Days.builder().dayType(type).build()
+                    Days.builder().bread(bread).dayType(type).build()
             );
         }
         return days;

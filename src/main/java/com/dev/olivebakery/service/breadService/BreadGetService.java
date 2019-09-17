@@ -4,6 +4,7 @@ import com.dev.olivebakery.domain.daos.BreadListDao;
 import com.dev.olivebakery.domain.dtos.BreadDto;
 import com.dev.olivebakery.domain.dtos.bread.BreadDetailResponseDto;
 import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
+import com.dev.olivebakery.domain.dtos.bread.IngredientListResponseDto;
 import com.dev.olivebakery.domain.entity.Bread;
 import com.dev.olivebakery.domain.entity.BreadImage;
 import com.dev.olivebakery.domain.entity.Days;
@@ -45,7 +46,7 @@ public class BreadGetService {
      * 오늘의 빵 가져오기.
      */
     public List<BreadListResponseDto> getTodayBreadList() {
-        DayType[] weekDay = { DayType.SUN, DayType.MON, DayType.THU, DayType.WED
+        DayType[] weekDay = { DayType.SUN, DayType.MON, DayType.TUE, DayType.WED
                 , DayType.THU, DayType.FRI, DayType.SAT};
         Calendar cal = Calendar.getInstance();
         int num = cal.get(Calendar.DAY_OF_WEEK)-1;
@@ -94,5 +95,9 @@ public class BreadGetService {
             logger.error(e.getMessage());
             return null;
         }
+    }
+
+    public List<IngredientListResponseDto> getIngredientList(){
+        return breadRepository.getIngredientList();
     }
 }

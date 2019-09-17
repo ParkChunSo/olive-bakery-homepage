@@ -1,12 +1,10 @@
 package com.dev.olivebakery.domain.dtos.bread;
 
 import com.dev.olivebakery.domain.entity.Bread;
-import com.dev.olivebakery.domain.entity.Days;
-import com.dev.olivebakery.domain.entity.Ingredients;
 import com.dev.olivebakery.domain.enums.BreadState;
 import com.dev.olivebakery.domain.enums.DayType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.SwaggerDefinition;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+@SwaggerDefinition
 @Getter @NoArgsConstructor
 public class BreadRequestDto {
     //빵 이름
@@ -51,15 +50,14 @@ public class BreadRequestDto {
 
     public Bread toEntity(){
         return Bread.builder()
-                .name(this.name)
-                .state(this.state)
-                .price(this.price)
-                .description(this.description)
-                .detailDescription(this.detailDescription)
-                .days(Days.newListInstance(this.days))
-                .ingredients(Ingredients.newListInstance(this.ingredientsList))
-                .isSoldOut(false)
-                .isDeleted(false)
-                .build();
+                            .name(this.name)
+                            .state(this.state)
+                            .price(this.price)
+                            .description(this.description)
+                            .detailDescription(this.detailDescription)
+                            .isSoldOut(false)
+                            .isDeleted(false)
+                            .build();
+
     }
 }

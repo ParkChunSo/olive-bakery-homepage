@@ -27,5 +27,4 @@ public interface BreadRepository extends JpaRepository<Bread, Long>, BreadReposi
 
     @Query("select b from Bread b where b.name in :names")
     List<Bread> findAllByByNameInQuery(@Param(value = "names") List<String> names);
-
 }

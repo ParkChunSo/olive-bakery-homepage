@@ -1,6 +1,7 @@
 package com.dev.olivebakery.repository.implement;
 
 import com.dev.olivebakery.domain.daos.BreadListDao;
+import com.dev.olivebakery.domain.dtos.bread.IngredientListResponseDto;
 import com.dev.olivebakery.domain.entity.*;
 import com.dev.olivebakery.domain.enums.DayType;
 import com.dev.olivebakery.repository.custom.BreadRepositoryCustom;
@@ -59,6 +60,14 @@ public class BreadRepositoryImpl extends QuerydslRepositorySupport implements Br
                 .where(bread.breadId.eq(breadId)).fetch();
     }
 
+    @Override
+    public List<IngredientListResponseDto> getIngredientList(){
+        JPAQuery<IngredientListResponseDto> ingredientQuery = new JPAQuery<>(entityManager);
+        return ingredientQuery.select(Projections.constructor(IngredientListResponseDto.class, ingredients.name, ingredients.origin))
+                .from(ingredients)
+                .distinct().fetch();
+    }
+
     private JPAQuery<BreadListDao> setQuery(){
         JPAQuery<BreadListDao> breadQuery = new JPAQuery<>(entityManager);
         return breadQuery.select(Projections.constructor(BreadListDao.class, bread.breadId, bread.name, bread.price, bread.description
@@ -66,6 +75,7 @@ public class BreadRepositoryImpl extends QuerydslRepositorySupport implements Br
                 .from(bread)
                 .leftJoin(bread.ingredients, ingredients)
                 .leftJoin(bread.days, days)
-                .leftJoin(bread.images, breadImage);
+                .leftJoin(bread.images, breadImage)
+                .where(bread.isDeleted.eq(true));
     }
 }

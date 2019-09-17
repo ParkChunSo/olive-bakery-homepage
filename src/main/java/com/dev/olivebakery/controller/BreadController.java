@@ -1,16 +1,12 @@
 package com.dev.olivebakery.controller;
 
-import com.dev.olivebakery.domain.dtos.BreadDto;
 import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.dtos.bread.BreadRequestDto;
-import com.dev.olivebakery.domain.entity.Bread;
+import com.dev.olivebakery.domain.dtos.bread.IngredientListResponseDto;
+import com.dev.olivebakery.domain.enums.BreadState;
 import com.dev.olivebakery.service.breadService.BreadGetService;
 import com.dev.olivebakery.service.breadService.BreadSaveService;
-import com.dev.olivebakery.service.breadService.BreadUpdateService;
-import com.dev.olivebakery.utill.BreadRequestDtoDeserializer;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -30,10 +26,10 @@ public class BreadController {
 
     private final BreadSaveService breadSaveService;
     private final BreadGetService breadGetService;
-    private final BreadUpdateService breadUpdateService;
+    private final ObjectMapper objectMapper;
 
     @ApiOperation("모든 빵 정보 가져오기")
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<BreadListResponseDto>> getAllBread(){
         return ResponseEntity.ok(breadGetService.getAllBreadList());
     }
@@ -56,54 +52,44 @@ public class BreadController {
         return ResponseEntity.ok(breadGetService.getBreadDetail(name));
     }
 
-    @ApiOperation("빵, 이미지 같이 저장")
-    @PostMapping()
-    public ResponseEntity<Bread> saveBreadAndImage(@RequestPart MultipartFile file,
-                                                        @RequestParam String json) throws Exception{
-        ObjectMapper objectMapper = new ObjectMapper();
-        BreadDto.BreadSave breadSave = objectMapper.readValue(json, BreadDto.BreadSave.class);
-        Bread bread = breadSaveService.saveBread(breadSave, file);
-
-        return ResponseEntity.ok(bread);
+    @ApiOperation("빵 재료의 이름과 원산지 가져오기")
+    @GetMapping("/ingredients")
+    public ResponseEntity<List<IngredientListResponseDto>> getIngredients(){
+        return ResponseEntity.ok(breadGetService.getIngredientList());
     }
-    @PostMapping("/test")
-    public void test(@RequestPart MultipartFile file,
-                     @RequestParam String json) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addDeserializer(BreadRequestDto.class, new BreadRequestDtoDeserializer());
-        objectMapper.registerModule(simpleModule);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+    @ApiOperation("빵, 이미지 같이 저장")
+    @PostMapping
+    public void saveBreadAndImage(@RequestPart MultipartFile file,
+                                  @RequestParam String json) throws Exception{
         BreadRequestDto breadSave = objectMapper.readValue(json, BreadRequestDto.class);
-        breadSaveService.saveBread1(breadSave, file);
+        breadSaveService.saveBread(breadSave, file);
     }
 
     @ApiOperation("빵 정보 수정")
-    @PutMapping()
-    public ResponseEntity<Bread> updateBread(@RequestPart(name = "file", required = false) MultipartFile file,
+    @PutMapping
+    public void updateBread(@RequestPart(name = "file", required = false) MultipartFile file,
                                              @RequestParam String json) throws Exception {
-        return ResponseEntity.ok(breadUpdateService.updateBread(file, json));
+        BreadRequestDto breadSave = objectMapper.readValue(json, BreadRequestDto.class);
+        breadSaveService.updateBread(breadSave, file);
     }
 
     @ApiOperation("빵 상태 변경")
-    @PutMapping("/state")
-    public ResponseEntity<Bread> changeBreadState(@RequestBody BreadDto.BreadUpdateState breadUpdateState){
-        log.info("-----빵 상태 변경 컨트롤러");
-        return ResponseEntity.ok(breadUpdateService.updateBreadState(breadUpdateState));
+    @PutMapping("/name/{name}/state/{state}")
+    public void changeBreadState(@PathVariable String name, @PathVariable BreadState state){
+        breadSaveService.updateBreadState(name, state);
     }
 
     @ApiOperation("빵 매진 상태 변경")
-    @PutMapping("/sold_out")
-    public ResponseEntity<Bread> changeBreadSoldOut(@RequestBody  BreadDto.BreadUpdateSoldOut breadUpdateSoldOut){
-        log.info("-----빵 매진상태 변경 컨트롤러");
-        return ResponseEntity.ok(breadUpdateService.updateBreadSoldOut(breadUpdateSoldOut));
+    @PutMapping("/name/{name}/sold_out/{isSoldOut}")
+    public void changeBreadSoldOut(@PathVariable String name, @PathVariable boolean isSoldOut){
+        breadSaveService.updateBreadSoldOut(name, isSoldOut);
     }
 
     @ApiOperation("빵 삭제")
-    @DeleteMapping("/name/{name}")
-    public ResponseEntity<Bread> deleteBread(@PathVariable String name){
-        return ResponseEntity.ok(breadUpdateService.deleteBread(name));
+    @DeleteMapping("/name/{name}/delete/{delete}")
+    public void deleteBread(@PathVariable String name, @PathVariable boolean delete){
+        breadSaveService.deleteBread(name, delete);
     }
 
     @ApiOperation("빵 이미지 가져오기")

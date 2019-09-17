@@ -1,5 +1,6 @@
 package com.dev.olivebakery.domain.entity;
 
+import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.enums.BreadState;
 import lombok.*;
 import lombok.extern.java.Log;
@@ -46,13 +47,13 @@ public class Bread {
                 joinColumns = @JoinColumn(name = "bread_id"),
                 inverseJoinColumns = @JoinColumn(name = "ingredients_id")
         )*/
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private List<Ingredients> ingredients = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private List<Days> days = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bread", cascade = CascadeType.MERGE)
     private List<BreadImage> images = new ArrayList<>();
 
     // 삭제 여부
@@ -93,16 +94,7 @@ public class Bread {
         this.ingredients = ingredientsList;
     }
 
-    public void addBreadIngredients(Ingredients ingredients) {
-        this.ingredients.add(ingredients);
-    }
-
-    public void deleteBreadIngredients(Ingredients removeIngredients){
-        this.ingredients.forEach(ingredients -> {
-            if(ingredients.getName().equals(removeIngredients.getName()) && ingredients.getOrigin().equals(removeIngredients.getOrigin())){
-                this.ingredients.remove(ingredients);
-            }
-        });
-//        this.ingredients.remove(ingredients);
-    }
+    public void updateDays(List<Days> days){this.days = days;}
+    public void addBreadImages(BreadImage image){this.images.add(image);}
+    public void updateBreadImages(List<BreadImage> images){this.images = images;}
 }
