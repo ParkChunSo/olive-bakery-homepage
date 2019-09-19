@@ -46,7 +46,8 @@ public class BreadListDao {
         this.breadPrice = breadPrice;
         this.description = description;
         this.detailDescription = detailDescription;
-        this.days = days.name();
+        if(days != null)
+            this.days = days.name();
         this.isSoldOut = isSoldOut;
         this.state = state;
         this.ingrediantName = ingrediantName;

@@ -1,19 +1,10 @@
 package com.dev.olivebakery.service.breadService;
 
 import com.dev.olivebakery.domain.daos.BreadListDao;
-import com.dev.olivebakery.domain.dtos.BreadDto;
-import com.dev.olivebakery.domain.dtos.bread.BreadDetailResponseDto;
 import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.dtos.bread.IngredientListResponseDto;
-import com.dev.olivebakery.domain.entity.Bread;
-import com.dev.olivebakery.domain.entity.BreadImage;
-import com.dev.olivebakery.domain.entity.Days;
-import com.dev.olivebakery.domain.entity.Ingredients;
 import com.dev.olivebakery.domain.enums.DayType;
-import com.dev.olivebakery.exception.UserDefineException;
-import com.dev.olivebakery.repository.BreadImageRepository;
 import com.dev.olivebakery.repository.BreadRepository;
-import com.dev.olivebakery.repository.DaysRepository;
 import com.dev.olivebakery.utill.ConverterUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
@@ -22,7 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;

@@ -56,7 +56,7 @@ public class BreadRepositoryImpl extends QuerydslRepositorySupport implements Br
             return new ArrayList<>();
         return query.select(breadImage.imagePath)
                 .from(bread)
-                .join(bread, breadImage.bread)
+                .join(bread.images, breadImage)
                 .where(bread.breadId.eq(breadId)).fetch();
     }
 
@@ -76,6 +76,6 @@ public class BreadRepositoryImpl extends QuerydslRepositorySupport implements Br
                 .leftJoin(bread.ingredients, ingredients)
                 .leftJoin(bread.days, days)
                 .leftJoin(bread.images, breadImage)
-                .where(bread.isDeleted.eq(true));
+                .where(bread.isDeleted.eq(false));
     }
 }
