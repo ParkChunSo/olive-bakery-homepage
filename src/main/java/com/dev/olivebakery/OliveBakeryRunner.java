@@ -38,6 +38,7 @@ public class OliveBakeryRunner implements ApplicationRunner {
 //
 //        memberRepository.saveAll(members);
 //        breadRepository.saveAll(breads);
+//        memberRepository.save(getAdminMember());
     }
 
     private List<Member> setMemberList(){
@@ -56,6 +57,18 @@ public class OliveBakeryRunner implements ApplicationRunner {
             );
         }
         return members;
+    }
+
+    private Member getAdminMember(){
+        return Member.builder()
+                .name("관리자")
+                .id("admin")
+                .age(20)
+                .pw(encoder.encode("1234"))
+                .phoneNumber("010-1234-1234")
+                .stamp(0)
+                .isMale(true)
+                .build();
     }
 
     private List<Bread> setBreadList(){

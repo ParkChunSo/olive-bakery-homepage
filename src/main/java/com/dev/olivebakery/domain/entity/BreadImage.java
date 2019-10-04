@@ -18,9 +18,9 @@ import java.util.UUID;
 @Entity
 @Getter
 @Builder
+@Table(name = "bread_image_tbl")
 @NoArgsConstructor @AllArgsConstructor
 public class BreadImage {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

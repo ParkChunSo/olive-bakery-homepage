@@ -62,20 +62,8 @@ public class Bread {
     // 매진 여부
     private Boolean isSoldOut;
 
-    public void updateName(String newName){
-        this.name = newName;
-    }
-
-    public void updatePrice(int price){
-        this.price = price;
-    }
-
-    public void updateDescription(String description){
-        this.description = description;
-    }
-
-    public void updateDetailDescription(String detailDescription){
-        this.detailDescription = detailDescription;
+    public void deleteBread(boolean delete){
+        this.isDeleted = delete;
     }
 
     public void updateBreadState(BreadState breadState){
@@ -86,15 +74,13 @@ public class Bread {
         this.isSoldOut = isSoldOut;
     }
 
-    public void deleteBread(boolean delete){
-        this.isDeleted = delete;
-    }
-
     public void updateBreadIngredients(List<Ingredients> ingredientsList) {
         this.ingredients = ingredientsList;
     }
 
     public void updateDays(List<Days> days){this.days = days;}
+
     public void addBreadImages(BreadImage image){this.images.add(image);}
+
     public void updateBreadImages(List<BreadImage> images){this.images = images;}
 }

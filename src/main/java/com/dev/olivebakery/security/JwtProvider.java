@@ -65,8 +65,12 @@ public class JwtProvider {
     }
 
     public Authentication getAuthenticationByToken(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmailByToken(token));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmailByResolvedToken(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    private String getUserEmailByResolvedToken(String bearerToken){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(bearerToken).getBody().getSubject();
     }
 
     // 사용자 아이디

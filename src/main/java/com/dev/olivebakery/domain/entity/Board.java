@@ -49,7 +49,7 @@ public class Board {
     @JoinColumn(name = "member")
     private Member member;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "board")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "board", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private List<Comment> comments = new ArrayList<>();
 
     @Builder

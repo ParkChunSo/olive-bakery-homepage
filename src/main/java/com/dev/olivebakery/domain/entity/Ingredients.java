@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "bread_ingredient_tbl")
 @Builder
 public class Ingredients {
     @Id

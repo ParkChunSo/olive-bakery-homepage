@@ -98,22 +98,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-//                .antMatchers(AUTH_ARR).anonymous()
-//                .antMatchers("/olive/sign/admin").hasRole(MemberRole.ADMIN.name())
-//                .antMatchers(HttpMethod.PUT,"/olive/sign").hasRole(MemberRole.CLIENT.name())
-//                .antMatchers(HttpMethod.DELETE,"/olive/sign").hasRole(MemberRole.CLIENT.name())
-//                .antMatchers("/olive/ingredients").hasRole(MemberRole.ADMIN.name())
-//                .antMatchers(HttpMethod.POST, "/olive/bread/**").hasRole(MemberRole.ADMIN.name())
-//                .antMatchers(HttpMethod.DELETE, "/olive/bread/**").hasRole(MemberRole.ADMIN.name())
-//                .antMatchers(HttpMethod.PUT, "/olive/bread/**").hasRole(MemberRole.ADMIN.name())
-                .antMatchers("/**").anonymous()
-                .anyRequest().anonymous()
-//                .and()
-//                .exceptionHandling().defaultAuthenticationEntryPointFor(swaggerAuthenticationEntryPoint(), new CustomRequestMatcher(AUTH_LIST))
-//                .authenticationEntryPoint(httpAuthenticationEntryPoint).accessDeniedHandler(accessDeniedHandler)
-//                .and()
-//                .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
-//                .logout().logoutUrl("/olive/logout").logoutSuccessHandler(logoutSuccessHandlerCustom)
+                .antMatchers(AUTH_ARR).anonymous()
+                .antMatchers("/olive/sign/admin").hasRole(MemberRole.ADMIN.name())
+                .antMatchers(HttpMethod.PUT,"/olive/sign").hasRole(MemberRole.CLIENT.name())
+                .antMatchers(HttpMethod.DELETE,"/olive/sign").hasRole(MemberRole.CLIENT.name())
+                .antMatchers(HttpMethod.POST, "/olive/bread/**").hasRole(MemberRole.ADMIN.name())
+                .antMatchers(HttpMethod.DELETE, "/olive/bread/**").hasRole(MemberRole.ADMIN.name())
+                .antMatchers(HttpMethod.PUT, "/olive/bread/**").hasRole(MemberRole.ADMIN.name())
+//                .antMatchers("/**").anonymous()
+                .anyRequest().permitAll()
+                .and()
+                .exceptionHandling().defaultAuthenticationEntryPointFor(swaggerAuthenticationEntryPoint(), new CustomRequestMatcher(AUTH_LIST))
+                .authenticationEntryPoint(httpAuthenticationEntryPoint).accessDeniedHandler(accessDeniedHandler)
+                .and()
+                .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout().logoutUrl("/olive/logout").logoutSuccessHandler(logoutSuccessHandlerCustom)
         ;
 
     }
@@ -128,12 +127,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-//        web.ignoring()
-//                .antMatchers(HttpMethod.POST, "/olive/sign/client")
-//                .antMatchers(HttpMethod.POST, "/olive/sign")
-//                .antMatchers(AUTH_ARR)
-//        ;
-        web.ignoring().antMatchers("/**");
+        web.ignoring()
+                .antMatchers(HttpMethod.POST, "/olive/sign/client")
+                .antMatchers(HttpMethod.POST, "/olive/sign")
+                .antMatchers(AUTH_ARR)
+        ;
+//        web.ignoring().antMatchers("/**");
     }
 
     @Bean
