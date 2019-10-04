@@ -37,4 +37,13 @@ public class ReservationInfo {
         this.reservation = reservation;
         this.bread = bread;
     }
+
+    public static ReservationInfo of(Integer breadCount, Reservation reservation, Bread bread) {
+        return ReservationInfo.builder()
+                .breadCount(breadCount)
+                .reservation(reservation)
+                .bread(bread)
+                .build()
+        ;
+    }
 }

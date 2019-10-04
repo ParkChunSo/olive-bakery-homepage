@@ -1,6 +1,6 @@
 package com.dev.olivebakery.repository.implement;
 
-import com.dev.olivebakery.domain.dto.SalesDto;
+import com.dev.olivebakery.domain.dtos.SalesDto;
 import com.dev.olivebakery.domain.entity.QSales;
 import com.dev.olivebakery.domain.entity.Sales;
 import com.dev.olivebakery.repository.custom.SalesRepositoryCustom;

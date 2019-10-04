@@ -1,13 +1,14 @@
 package com.dev.olivebakery.repository.custom;
 
-import com.dev.olivebakery.domain.dto.BoardDto;
+import com.dev.olivebakery.domain.dtos.board.PostDetailsResponseDto;
+import com.dev.olivebakery.domain.dtos.board.PostListResponseDto;
 import com.dev.olivebakery.domain.enums.BoardType;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface BoardRepositoryCustom {
-    Page<BoardDto.GetPosts> getPosts(BoardType boardType, int pageNum);
-    List<BoardDto.GetPosts> getNoticePosts();
-    BoardDto.GetPostDetails getPostDetails(Long boardId);
+    Page<PostListResponseDto> getPosts(BoardType boardType, int pageNum);
+    List<PostListResponseDto> getNoticePosts();
+    PostDetailsResponseDto getPostDetails(Long boardId);
 }

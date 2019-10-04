@@ -1,6 +1,6 @@
 package com.dev.olivebakery.repository.custom;
 
-import com.dev.olivebakery.domain.dto.SalesDto;
+import com.dev.olivebakery.domain.dtos.SalesDto;
 
 import java.time.LocalDate;
 import java.util.List;

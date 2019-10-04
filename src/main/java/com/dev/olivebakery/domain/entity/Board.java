@@ -1,17 +1,13 @@
 package com.dev.olivebakery.domain.entity;
 
-import com.dev.olivebakery.domain.dto.BoardDto;
+import com.dev.olivebakery.domain.dtos.board.PostDetailsRequestDto;
 import com.dev.olivebakery.domain.enums.BoardType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +49,7 @@ public class Board {
     @JoinColumn(name = "member")
     private Member member;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "board")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "board", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
@@ -66,10 +62,10 @@ public class Board {
         this.member = member;
     }
 
-    public void updateBoard(BoardDto.UpdatePost updatePostDto) {
+    public void updateBoard(PostDetailsRequestDto updatePostDto) {
         this.context = updatePostDto.getContext();
         this.title = updatePostDto.getTitle();
-        this.isNotice = updatePostDto.getIsNotice().matches("true");
-        this.isSecret = updatePostDto.getIsSecret().matches("true");
+        this.isNotice = updatePostDto.isNotice();
+        this.isSecret = updatePostDto.isSecret();
     }
 }

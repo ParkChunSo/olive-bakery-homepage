@@ -1,19 +1,15 @@
 package com.dev.olivebakery.domain.entity;
 
 import com.dev.olivebakery.domain.enums.ReservationType;
-import com.dev.olivebakery.utill.Explain;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +42,12 @@ public class Reservation {
     private ReservationType reservationType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "user_id")
     private Member member;
 
-    @OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<ReservationInfo> reservationInfos = new ArrayList<>();
+
 
     @Builder
     public Reservation(LocalDateTime reservationTime, LocalDateTime bringTime, Integer price, Member member, List<ReservationInfo> reservationInfos) {
@@ -62,7 +59,27 @@ public class Reservation {
         this.reservationInfos = reservationInfos;
     }
 
-    @Explain("요청 -> 수락 -> 완료")
+    public static Reservation of(LocalDateTime bringTime, Member member, int totalPrice) {
+        return Reservation.builder()
+                .bringTime(bringTime)
+                .member(member)
+                .price(totalPrice)
+                .build()
+        ;
+    }
+
+    public void updateReservationInfos(List<ReservationInfo> reservationInfos) {
+        this.reservationInfos = reservationInfos;
+    }
+
+    public void updateBringTime(LocalDateTime bringTime) {
+        this.bringTime = bringTime;
+    }
+
+    public void updateTotalPrice(int totalPrice) {
+        this.price = totalPrice;
+    }
+
     public void updateReservationType() {
         reservationType = reservationType.equals(ReservationType.REQUEST) ? ReservationType.ACCEPT : ReservationType.COMPLETE;
     }

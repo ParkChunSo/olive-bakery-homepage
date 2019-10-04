@@ -1,6 +1,6 @@
 package com.dev.olivebakery.controller;
 
-import com.dev.olivebakery.domain.dto.SalesDto;
+import com.dev.olivebakery.domain.dtos.SalesDto;
 import com.dev.olivebakery.service.SalesService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
