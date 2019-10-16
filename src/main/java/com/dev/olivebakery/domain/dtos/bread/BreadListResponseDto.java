@@ -10,6 +10,8 @@ import java.util.List;
 
 @Getter @NoArgsConstructor
 public class BreadListResponseDto {
+
+    private Long id;
     //빵 이름
     private String name;
 
@@ -38,7 +40,8 @@ public class BreadListResponseDto {
     private String imageUrl;
 
     @Builder
-    public BreadListResponseDto(String name, Integer price, String description, String detailDescription, List<String> days, Boolean isSoldOut, BreadState state, List<IngredientListResponseDto> ingredientsList, String imageUrl) {
+    public BreadListResponseDto(Long breadId, String name, Integer price, String description, String detailDescription, List<String> days, Boolean isSoldOut, BreadState state, List<IngredientListResponseDto> ingredientsList, String imageUrl) {
+        this.id = breadId;
         this.name = name;
         this.price = price;
         this.description = description;

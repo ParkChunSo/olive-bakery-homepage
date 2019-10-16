@@ -75,21 +75,21 @@ public class BreadController {
     }
 
     @ApiOperation("빵 상태 변경")
-    @PutMapping("/name/{name}/state/{state}")
-    public void changeBreadState(@PathVariable String name, @PathVariable BreadState state){
-        breadSaveService.updateBreadState(name, state);
+    @PutMapping("/id/{id}/state/{state}")
+    public void changeBreadState(@PathVariable Long id, @PathVariable BreadState state){
+        breadSaveService.updateBreadState(id, state);
     }
 
     @ApiOperation("빵 매진 상태 변경")
-    @PutMapping("/name/{name}/sold_out/{isSoldOut}")
-    public void changeBreadSoldOut(@PathVariable String name, @PathVariable boolean isSoldOut){
-        breadSaveService.updateBreadSoldOut(name, isSoldOut);
+    @PutMapping("/id/{id}/sold_out/{isSoldOut}")
+    public void changeBreadSoldOut(@PathVariable Long id, @PathVariable boolean isSoldOut){
+        breadSaveService.updateBreadSoldOut(id, isSoldOut);
     }
 
     @ApiOperation("빵 삭제")
-    @DeleteMapping("/name/{name}/delete/{delete}")
-    public void deleteBread(@PathVariable String name, @PathVariable boolean delete){
-        breadSaveService.deleteBread(name, delete);
+    @DeleteMapping("/id/{id}/delete/{delete}")
+    public void deleteBread(@PathVariable Long id, @PathVariable boolean delete){
+        breadSaveService.deleteBread(id, delete);
     }
 
     @ApiOperation("빵 이미지 가져오기")

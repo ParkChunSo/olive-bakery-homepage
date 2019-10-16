@@ -1,10 +1,8 @@
 package com.dev.olivebakery.domain.entity;
 
-import com.dev.olivebakery.domain.dtos.bread.BreadListResponseDto;
 import com.dev.olivebakery.domain.enums.BreadState;
 import lombok.*;
 import lombok.extern.java.Log;
-import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -68,6 +66,12 @@ public class Bread {
 
     public void updateBreadState(BreadState breadState){
         this.state = breadState;
+    }
+
+    public void updateBreadInfo(Integer price, String description, String detailDescription){
+        this.price = price;
+        this.description = description;
+        this.detailDescription = detailDescription;
     }
 
     public void updateBreadSoldOut(boolean isSoldOut){

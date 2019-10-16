@@ -63,7 +63,8 @@ public class BreadSaveService {
             images.add(BreadImage.of(file, bread, environment.getProperty(IMAGE_PATH_KEY)));
             bread.updateBreadImages(images);
         }catch (IOException e) {
-            throw new UserDefineException("이미지 저장하는데 오류가 발생했습니다.", e.getMessage());
+//            throw new UserDefineException("이미지 저장하는데 오류가 발생했습니다.", e.getMessage());
+            System.out.println(e.getMessage());
         }
         breadRepository.save(bread);
     }
@@ -81,8 +82,14 @@ public class BreadSaveService {
         if(!ObjectUtils.isEmpty(image))
             bread.addBreadImages(BreadImage.of(image, bread, environment.getProperty(IMAGE_PATH_KEY)));
 
-        bread.updateBreadIngredients(Ingredients.newListInstance(bread, breadRequestDto.getIngredientsList()));
-        bread.updateDays(Days.newListInstance(bread, breadRequestDto.getDays()));
+        bread.updateBreadInfo(breadRequestDto.getPrice(), breadRequestDto.getDescription(), breadRequestDto.getDetailDescription());
+
+        bread.updateBreadIngredients(
+                Ingredients.newListInstance(bread, breadRequestDto.getIngredientsList())
+        );
+        bread.updateDays(
+                Days.newListInstance(bread, breadRequestDto.getDays())
+        );
 
         breadRepository.save(bread);
     }
@@ -90,9 +97,9 @@ public class BreadSaveService {
     /**
      * 빵 상태 수정하기
      */
-    public void updateBreadState(String breadName, BreadState state){
-        Bread bread = breadRepository.findByName(breadName)
-                .orElseThrow(() -> new UserDefineException(breadName + "이란 빵은 존재하지 않습니다."));
+    public void updateBreadState(Long id, BreadState state){
+        Bread bread = breadRepository.findById(id)
+                .orElseThrow(() -> new UserDefineException("해당 빵이 존재하지 않습니다."));
         bread.updateBreadState(state);
 
         breadRepository.save(bread);
@@ -101,16 +108,16 @@ public class BreadSaveService {
     /**
      * 빵 매진 정보 수정하기
      */
-    public void updateBreadSoldOut(String breadName, boolean isSoldOut) {
-        Bread bread = breadRepository.findByName(breadName)
-                .orElseThrow(() -> new UserDefineException(breadName + "이란 빵은 존재하지 않습니다."));
+    public void updateBreadSoldOut(Long id, boolean isSoldOut) {
+        Bread bread = breadRepository.findById(id)
+                .orElseThrow(() -> new UserDefineException("해당 빵이 존재하지 않습니다."));
         bread.updateBreadSoldOut(isSoldOut);
 
         breadRepository.save(bread);
     }
 
-    public void deleteBread(String breadName, boolean delete){
-        Bread bread = breadRepository.findByName(breadName)
+    public void deleteBread(Long id, boolean delete){
+        Bread bread = breadRepository.findById(id)
                 .orElseThrow(() -> new UserDefineException("해당 빵이 존재하지 않습니다."));
         bread.deleteBread(delete);
 

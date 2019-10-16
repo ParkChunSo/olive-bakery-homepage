@@ -68,6 +68,7 @@ public class ConverterUtils {
         BreadListDao tmp = daos.get(0);
 
         return  BreadListResponseDto.builder()
+                .breadId(tmp.getBreadId())
                 .name(tmp.getBreadName())
                 .price(tmp.getBreadPrice())
                 .description(tmp.getDescription())
