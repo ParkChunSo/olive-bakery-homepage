@@ -3,6 +3,7 @@ package com.dev.olivebakery.domain.dtos.board;
 import com.dev.olivebakery.domain.entity.Board;
 import com.dev.olivebakery.domain.entity.Member;
 import com.dev.olivebakery.domain.enums.BoardType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,8 +19,10 @@ public class PostDetailsRequestDto {
     private String title;
     private BoardType boardType;
     @ApiModelProperty(notes = "true 또는 false로 보내야함")
+    @JsonProperty
     private boolean isNotice;
     @ApiModelProperty(notes = "true 또는 false로 보내야함")
+    @JsonProperty
     private boolean isSecret;
 
     @Builder

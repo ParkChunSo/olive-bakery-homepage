@@ -45,6 +45,13 @@ public class ReservationController {
 		return reservationGetService.getReservationInfoByRecently(bearerToken);
 	}
 
+	@ApiOperation(value = "유저의 예약내역 조회(관리자)", notes = "유저의 예약한 전체 내역을 관리자 권한으로 조회")
+	@GetMapping("/userId/{id}/type/{type}")
+	public List<ReservationInfoListResponseDto> getReservationInfosByAdminRole(@PathVariable("id") String id
+																		, @PathVariable("type") ReservationType reservationType
+																		, @RequestHeader(name = "Authorization") String bearerToken) {
+		return reservationGetService.getReservationInfosByUserId(id, reservationType, bearerToken);
+	}
 
 	@ApiOperation(value = "날짜별 예약 조회", notes = "날짜별 예약 조회, Admin 에서 사용")
 	@ApiImplicitParams({

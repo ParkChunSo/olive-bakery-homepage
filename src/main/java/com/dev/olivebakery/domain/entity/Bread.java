@@ -3,6 +3,7 @@ package com.dev.olivebakery.domain.entity;
 import com.dev.olivebakery.domain.enums.BreadState;
 import lombok.*;
 import lombok.extern.java.Log;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class Bread {
     private String description;
 
     //빵을 클릭했을 때 선택한 빵의 상세 소개
+    @Column(length = 2000)
     private String detailDescription;
 
     // 관리자가 선정한 빵 상태(추천, 등등)1

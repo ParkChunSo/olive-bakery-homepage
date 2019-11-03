@@ -1,6 +1,7 @@
 package com.dev.olivebakery.domain.dtos.sign;
 
 import com.dev.olivebakery.domain.entity.Member;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class SignUpRequestDto {
     private String name;
     private String phoneNumber;
     private int age;
+    @JsonProperty
     private boolean isMale;
 
     @Builder

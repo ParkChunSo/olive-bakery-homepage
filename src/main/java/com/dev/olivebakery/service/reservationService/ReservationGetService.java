@@ -13,6 +13,7 @@ import com.dev.olivebakery.security.JwtProvider;
 import com.dev.olivebakery.utill.ConverterUtils;
 import com.dev.olivebakery.utill.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -41,6 +42,23 @@ public class ReservationGetService {
 	public List<ReservationInfoListResponseDto> getReservationInfos(ReservationType reservationType, String bearerToken) {
 		String email = jwtProvider.getUserEmailByToken(bearerToken);
 		List<ReservationInfoListTmpDto> reservationInfoListTmpDtoList = reservationRepository.getReservationInfoList(email,
+				reservationType);
+
+		if(ObjectUtils.isEmpty(reservationInfoListTmpDtoList)) {
+			return new ArrayList<>();
+		}
+		return ConverterUtils.convertGetTempDtoListToGetDtoList(reservationInfoListTmpDtoList);
+	}
+
+	/**
+	 * 유저의 모든 예약내역을 예약타입별로 가져옴
+	 */
+	public List<ReservationInfoListResponseDto> getReservationInfosByUserId(String id, ReservationType reservationType, String bearerToken) {
+		List<MemberRole> roles = jwtProvider.getUserRolesByToken(bearerToken);
+		if(!roles.contains(MemberRole.ADMIN))
+			throw new UserDefineException("해당권한이 없습니다.", HttpStatus.UNAUTHORIZED);
+
+		List<ReservationInfoListTmpDto> reservationInfoListTmpDtoList = reservationRepository.getReservationInfoList(id,
 				reservationType);
 
 		if(ObjectUtils.isEmpty(reservationInfoListTmpDtoList)) {

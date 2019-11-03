@@ -1,9 +1,6 @@
 package com.dev.olivebakery.controller;
 
-import com.dev.olivebakery.domain.dtos.board.CommentRequestDto;
-import com.dev.olivebakery.domain.dtos.board.PostDetailsRequestDto;
-import com.dev.olivebakery.domain.dtos.board.PostDetailsResponseDto;
-import com.dev.olivebakery.domain.dtos.board.PostListResponseDto;
+import com.dev.olivebakery.domain.dtos.board.*;
 import com.dev.olivebakery.domain.enums.BoardType;
 import com.dev.olivebakery.service.BoardService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -66,7 +63,7 @@ public class BoardController {
 
     @ApiOperation("댓글 저장하기")
     @PostMapping("/comment")
-    public void saveComment(@RequestHeader(name = "Authorization") String token, @RequestBody CommentRequestDto comment){
+    public void saveComment(@RequestHeader(name = "Authorization") String token, @RequestBody CommentSaveRequestDto comment){
         boardService.saveComment(token, comment);
     }
 

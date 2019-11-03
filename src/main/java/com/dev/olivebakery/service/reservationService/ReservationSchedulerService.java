@@ -24,7 +24,7 @@ public class ReservationSchedulerService {
 
 
 	/**
-	 * 예약 완료 목록 정보 날짜별 저장
+	 * 온라인 매출 정보 날짜별 저장
 	 */
 	@Scheduled(cron = "0 0 23 * * MON-FRI")
 	public void saveReservationSaleByDate() {

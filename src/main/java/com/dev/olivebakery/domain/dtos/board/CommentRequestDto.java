@@ -29,4 +29,9 @@ public class CommentRequestDto {
         this.userId = userId;
         return this;
     }
+
+    public CommentRequestDto setUserName(String name) {
+        this.userName = name;
+        return this;
+    }
 }

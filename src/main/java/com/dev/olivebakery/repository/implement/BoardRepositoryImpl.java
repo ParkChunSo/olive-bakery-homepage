@@ -78,6 +78,7 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport implements Bo
                                                     .insertTime(comment.getInsertTime())
                                                     .updateTime(comment.getUpdateTime())
                                                     .userName(comment.getUserName())
+                                                    .userId(comment.getUserId())
                                                     .content(comment.getContent())
                                                     .build()
                     )

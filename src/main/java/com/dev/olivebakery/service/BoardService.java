@@ -1,11 +1,9 @@
 package com.dev.olivebakery.service;
 
-import com.dev.olivebakery.domain.dtos.board.CommentRequestDto;
-import com.dev.olivebakery.domain.dtos.board.PostDetailsRequestDto;
-import com.dev.olivebakery.domain.dtos.board.PostDetailsResponseDto;
-import com.dev.olivebakery.domain.dtos.board.PostListResponseDto;
+import com.dev.olivebakery.domain.dtos.board.*;
 import com.dev.olivebakery.domain.entity.Board;
 import com.dev.olivebakery.domain.entity.Comment;
+import com.dev.olivebakery.domain.entity.Member;
 import com.dev.olivebakery.domain.enums.BoardType;
 import com.dev.olivebakery.domain.enums.MemberRole;
 import com.dev.olivebakery.exception.UserDefineException;
@@ -83,6 +81,8 @@ public class BoardService {
         if(requestDto.isNotice() && !jwtProvider.getUserRolesByToken(bearerToken).contains(MemberRole.ADMIN))
             throw new UserDefineException("해당 게시물을 공지사항할 수 있는 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
 
+        System.out.println(requestDto.isNotice());
+        System.out.println(requestDto.isSecret());
         boardRepository.save(requestDto.toEntity(signService.findById(userId)));
     }
 
@@ -118,10 +118,10 @@ public class BoardService {
         }
     }
 
-    public void saveComment(String bearerToken, CommentRequestDto comment) {
-        signService.findById(jwtProvider.getUserEmailByToken(bearerToken));  //validation check
+    public void saveComment(String bearerToken, CommentSaveRequestDto comment) {
+        Member member = signService.findById(jwtProvider.getUserEmailByToken(bearerToken)); //validation check
         Board board = findBoardById(Long.valueOf(comment.getBoardId()));
-        commentRepository.save(comment.toEntity(board));
+        commentRepository.save(comment.toEntity(member, board));
     }
 
     public void updateComment(String bearerToken, CommentRequestDto updateComment) {
