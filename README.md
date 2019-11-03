@@ -18,6 +18,13 @@
 6. Swagger
 7. AWS, RDS
 
+## Unique
+1. Spring-Security와 JWT를 활용하여 Role의 따라 차별화된 서비스 제공
+2. Swagger를 사용하여 Front-End 개발자와 지속적인 컨텍
+3. JPA와 QueryDSL을 사용하여 보다 안정적인 서버
+4. 도메인을 직관적으로
+5. 브랜치 전략
+
 ## TODO
 1. 테스트 케이스 만들기
 2. Google-code-style 적용
