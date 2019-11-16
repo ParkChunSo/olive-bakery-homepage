@@ -6,13 +6,14 @@ import lombok.Getter;
 
 @Getter
 public class AverageDto {
-    private double ave;
-    private SaleType saleType;
 
-    @Builder
+  private double ave;
+  private SaleType saleType;
 
-    public AverageDto(double ave, SaleType saleType) {
-        this.ave = ave;
-        this.saleType = saleType;
-    }
+  @Builder
+
+  public AverageDto(double ave, SaleType saleType) {
+    this.ave = ave;
+    this.saleType = saleType;
+  }
 }

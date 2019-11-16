@@ -19,25 +19,25 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class ReservationSchedulerService {
 
-	private final ReservationRepository reservationRepository;
-	private final SalesService salesService;
+  private final ReservationRepository reservationRepository;
+  private final SalesService salesService;
 
 
-	/**
-	 * 온라인 매출 정보 날짜별 저장
-	 */
-	@Scheduled(cron = "0 0 23 * * MON-FRI")
-	public void saveReservationSaleByDate() {
-		ReservationSaleTmpDto reservationSale = reservationRepository.getReservationSaleByDate(
-				DateUtils.getStartOfToday(),
-				DateUtils.getEndOfToday(),
-				ReservationType.COMPLETE
-		);
+  /**
+   * 온라인 매출 정보 날짜별 저장
+   */
+  @Scheduled(cron = "0 0 23 * * MON-FRI")
+  public void saveReservationSaleByDate() {
+    ReservationSaleTmpDto reservationSale = reservationRepository.getReservationSaleByDate(
+        DateUtils.getStartOfToday(),
+        DateUtils.getEndOfToday(),
+        ReservationType.COMPLETE
+    );
 
-		if (ObjectUtils.isEmpty(reservationSale)) {
-			throw new UserDefineException("예약 내역이 없습니다");
-		}
-		salesService.saveReservationSale(reservationSale);
-	}
+    if (ObjectUtils.isEmpty(reservationSale)) {
+      throw new UserDefineException("예약 내역이 없습니다");
+    }
+    salesService.saveReservationSale(reservationSale);
+  }
 
 }

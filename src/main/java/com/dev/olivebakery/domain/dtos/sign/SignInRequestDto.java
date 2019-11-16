@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SignInRequestDto {
-    private String id;
-    private String pw;
+
+  private String id;
+  private String pw;
 }

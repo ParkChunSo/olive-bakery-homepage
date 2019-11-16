@@ -8,14 +8,15 @@ import java.time.LocalDate;
 
 @Getter
 public class GraphDao {
-    private LocalDate date;
-    private double ave;
-    private SaleType saleType;
 
-    @Builder
-    public GraphDao(LocalDate date, double ave, SaleType saleType) {
-        this.date = date;
-        this.ave = ave;
-        this.saleType = saleType;
-    }
+  private LocalDate date;
+  private double ave;
+  private SaleType saleType;
+
+  @Builder
+  public GraphDao(LocalDate date, double ave, SaleType saleType) {
+    this.date = date;
+    this.ave = ave;
+    this.saleType = saleType;
+  }
 }

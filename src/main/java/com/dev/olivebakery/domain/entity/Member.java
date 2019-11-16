@@ -2,6 +2,21 @@ package com.dev.olivebakery.domain.entity;
 
 import com.dev.olivebakery.domain.dtos.sign.SignUpRequestDto;
 import com.dev.olivebakery.domain.enums.MemberRole;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,74 +24,70 @@ import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "member_tbl")
 public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long uuid;
 
-    @Column(unique = true)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long uuid;
 
-    private String pw;
+  @Column(unique = true)
+  private String id;
 
-    private String name;
+  private String pw;
 
-    @Column(name = "phone_num")
-    private String phoneNumber;
+  private String name;
 
-    // true면 남자
-    private boolean isMale;
+  @Column(name = "phone_num")
+  private String phoneNumber;
 
-    private int age;
+  // true면 남자
+  private boolean isMale;
 
-    // 10000원 이상 구매시 +1
-    private int stamp;
+  private int age;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(value = EnumType.STRING)
-    private Set<MemberRole> role;
+  // 10000원 이상 구매시 +1
+  private int stamp;
 
-    @OneToMany(mappedBy = "member")
-    private List<Reservation> reservations = new ArrayList<>();
+  @ElementCollection(fetch = FetchType.EAGER)
+  @Enumerated(value = EnumType.STRING)
+  private Set<MemberRole> role;
 
-    @OneToMany(mappedBy = "member" ,fetch = FetchType.LAZY)
-    private List<Board> boards = new ArrayList<>();
+  @OneToMany(mappedBy = "member")
+  private List<Reservation> reservations = new ArrayList<>();
 
-    @Builder
-    public Member(String id, String pw, String name, String phoneNumber,boolean isMale, int age, int stamp){
-        this.id = id;
-        this.pw = pw;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.isMale = isMale;
-        this.age = age;
-        this.stamp = stamp;
-    }
+  @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+  private List<Board> boards = new ArrayList<>();
 
-    public User toUser(){
-        return new User(id, pw
-                , role.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                    .collect(Collectors.toSet()));
-    }
+  @Builder
+  public Member(String id, String pw, String name, String phoneNumber, boolean isMale, int age,
+      int stamp) {
+    this.id = id;
+    this.pw = pw;
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.isMale = isMale;
+    this.age = age;
+    this.stamp = stamp;
+  }
 
-    public Member update(SignUpRequestDto dto){
-        this.id = dto.getId();
-        this.name = dto.getName();
-        this.pw = dto.getPw();
-        this.phoneNumber = dto.getPhoneNumber();
-        
-        return this;
-    }
+  public User toUser() {
+    return new User(id, pw
+        , role.stream()
+        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+        .collect(Collectors.toSet()));
+  }
+
+  public Member update(SignUpRequestDto dto) {
+    this.id = dto.getId();
+    this.name = dto.getName();
+    this.pw = dto.getPw();
+    this.phoneNumber = dto.getPhoneNumber();
+
+    return this;
+  }
 }

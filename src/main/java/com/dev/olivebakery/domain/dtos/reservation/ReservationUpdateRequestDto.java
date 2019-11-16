@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReservationUpdateRequestDto {
-    private Long reservationId;
-    private ReservationSaveRequestDto reservationSaveRequest;
 
-    @Builder
-    public ReservationUpdateRequestDto(Long reservationId, ReservationSaveRequestDto reservationSaveRequest) {
-        this.reservationId = reservationId;
-        this.reservationSaveRequest = reservationSaveRequest;
-    }
+  private Long reservationId;
+  private ReservationSaveRequestDto reservationSaveRequest;
+
+  @Builder
+  public ReservationUpdateRequestDto(Long reservationId,
+      ReservationSaveRequestDto reservationSaveRequest) {
+    this.reservationId = reservationId;
+    this.reservationSaveRequest = reservationSaveRequest;
+  }
 }

@@ -7,17 +7,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-@Getter @NoArgsConstructor
+@Getter
+@NoArgsConstructor
 public class CommentSaveRequestDto {
-    private String boardId;
-    private String content;
 
-    public Comment toEntity(Member member,Board board){
-        return Comment.builder()
-                .userName(member.getName())
-                .userId(member.getId())
-                .content(this.content)
-                .board(board)
-                .build();
-    }
+  private String boardId;
+  private String content;
+
+  public Comment toEntity(Member member, Board board) {
+    return Comment.builder()
+        .userName(member.getName())
+        .userId(member.getId())
+        .content(this.content)
+        .board(board)
+        .build();
+  }
 }
