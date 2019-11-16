@@ -6,7 +6,7 @@ import com.dev.olivebakery.domain.dtos.sign.SignInRequestDto;
 import com.dev.olivebakery.domain.dtos.sign.SignUpRequestDto;
 import com.dev.olivebakery.domain.enums.MemberRole;
 import com.dev.olivebakery.security.JwtProvider;
-import com.dev.olivebakery.service.signService.SignService;
+import com.dev.olivebakery.service.SignService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -10,7 +10,6 @@ import com.dev.olivebakery.exception.UserDefineException;
 import com.dev.olivebakery.repository.BoardRepository;
 import com.dev.olivebakery.repository.CommentRepository;
 import com.dev.olivebakery.security.JwtProvider;
-import com.dev.olivebakery.service.signService.SignService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

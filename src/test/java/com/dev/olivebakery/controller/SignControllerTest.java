@@ -4,7 +4,7 @@ import com.dev.olivebakery.domain.dtos.sign.SignUpRequestDto;
 import com.dev.olivebakery.domain.entity.Member;
 import com.dev.olivebakery.repository.MemberRepository;
 import com.dev.olivebakery.security.JwtProvider;
-import com.dev.olivebakery.service.signService.SignService;
+import com.dev.olivebakery.service.SignService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;

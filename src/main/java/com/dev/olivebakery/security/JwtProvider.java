@@ -1,7 +1,7 @@
 package com.dev.olivebakery.security;
 
 import com.dev.olivebakery.domain.enums.MemberRole;
-import com.dev.olivebakery.service.signService.UserDetailsServiceImpl;
+import com.dev.olivebakery.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

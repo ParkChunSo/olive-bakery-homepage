@@ -1,7 +1,7 @@
 package com.dev.olivebakery.security;
 
 import com.dev.olivebakery.domain.enums.MemberRole;
-import com.dev.olivebakery.service.signService.UserDetailsServiceImpl;
+import com.dev.olivebakery.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

@@ -25,73 +25,77 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BreadGetService {
 
-    private final BreadRepository breadRepository;
+  private final BreadRepository breadRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(BreadGetService.class);
+  private static final Logger logger = LoggerFactory.getLogger(BreadGetService.class);
 
-    /**
-     * 등록된 모든 빵정보 가져오기
-     */
-    public List<BreadListResponseDto> getAllBreadList(){
-        return ConverterUtils.convertBreadDao2BreadListResponseDto(breadRepository.getAllBreadList());
+  /**
+   * 등록된 모든 빵정보 가져오기
+   */
+  public List<BreadListResponseDto> getAllBreadList() {
+    return ConverterUtils.convertBreadDao2BreadListResponseDto(breadRepository.getAllBreadList());
+  }
+
+  /**
+   * 오늘의 빵 가져오기.
+   */
+  public List<BreadListResponseDto> getTodayBreadList() {
+    DayType[] weekDay = {DayType.SUN, DayType.MON, DayType.TUE, DayType.WED
+        , DayType.THU, DayType.FRI, DayType.SAT};
+    Calendar cal = Calendar.getInstance();
+    int num = cal.get(Calendar.DAY_OF_WEEK) - 1;
+
+    List<BreadListDao> breadListByDay = breadRepository.getBreadListByDay(weekDay[num]);
+    if (ObjectUtils.isEmpty(breadListByDay)) {
+      return new ArrayList<>();
     }
 
-    /**
-     * 오늘의 빵 가져오기.
-     */
-    public List<BreadListResponseDto> getTodayBreadList() {
-        DayType[] weekDay = { DayType.SUN, DayType.MON, DayType.TUE, DayType.WED
-                , DayType.THU, DayType.FRI, DayType.SAT};
-        Calendar cal = Calendar.getInstance();
-        int num = cal.get(Calendar.DAY_OF_WEEK)-1;
+    return ConverterUtils.convertBreadDao2BreadListResponseDto(breadListByDay);
+  }
 
-        List<BreadListDao> breadListByDay = breadRepository.getBreadListByDay(weekDay[num]);
-        if(ObjectUtils.isEmpty(breadListByDay))
-            return new ArrayList<>();
+  /**
+   * 특정 요일의 빵 가져오기
+   */
+  public List<BreadListResponseDto> getBreadListByDay(String day) {
+    return ConverterUtils.convertBreadDao2BreadListResponseDto(
+        breadRepository.getBreadListByDay(DayType.valueOf(day)));
+  }
 
-        return ConverterUtils.convertBreadDao2BreadListResponseDto(breadListByDay);
+  /**
+   * 특정 빵 정보 가져오기
+   */
+  public BreadListResponseDto getBreadDetail(String breadName) {
+    List<BreadListDao> daos = breadRepository.getBreadByBreadName(breadName);
+    if (daos.isEmpty()) {
+      return new BreadListResponseDto();
     }
+    return ConverterUtils.convertBreadDaoList2BreadListResponseDto(daos);
+  }
 
-    /**
-     * 특정 요일의 빵 가져오기
-     */
-    public List<BreadListResponseDto> getBreadListByDay(String day) {
-        return ConverterUtils.convertBreadDao2BreadListResponseDto(breadRepository.getBreadListByDay(DayType.valueOf(day)));
+  /**
+   * 빵의 이미지 가져오기
+   */
+  public byte[] getImageResource(String image) {
+    List<String> breadImages = breadRepository.getImagePathByBreadName(image);
+    if (breadImages.isEmpty()) {
+      return null;
     }
+    byte[] result;
+    try {
+      File file = new File(breadImages.get(0));
 
-    /**
-     * 특정 빵 정보 가져오기
-     */
-    public BreadListResponseDto getBreadDetail(String breadName){
-        List<BreadListDao> daos = breadRepository.getBreadByBreadName(breadName);
-        if(daos.isEmpty())
-            return new BreadListResponseDto();
-        return ConverterUtils.convertBreadDaoList2BreadListResponseDto(daos);
+      InputStream in = new FileInputStream(file);
+
+      result = IOUtils.toByteArray(in);
+
+      return result;
+    } catch (IOException e) {
+      logger.error(e.getMessage());
+      return null;
     }
+  }
 
-    /**
-     * 빵의 이미지 가져오기
-     */
-    public byte[] getImageResource(String image){
-        List<String> breadImages = breadRepository.getImagePathByBreadName(image);
-        if(breadImages.isEmpty())
-            return null;
-        byte[] result;
-        try {
-            File file = new File(breadImages.get(0));
-
-            InputStream in = new FileInputStream(file);
-
-            result = IOUtils.toByteArray(in);
-
-            return result;
-        } catch (IOException e){
-            logger.error(e.getMessage());
-            return null;
-        }
-    }
-
-    public List<IngredientListResponseDto> getIngredientList(){
-        return breadRepository.getIngredientList();
-    }
+  public List<IngredientListResponseDto> getIngredientList() {
+    return breadRepository.getIngredientList();
+  }
 }

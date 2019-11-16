@@ -10,19 +10,20 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class CommentRequestDto {
+
     private String boardId;
     private String userName;
     private String userId;
     private String content;
     private LocalDateTime updateTime;
 
-    public Comment toEntity(Board board){
+    public Comment toEntity(Board board) {
         return Comment.builder()
-                .userName(this.userName)
-                .userId(this.userId)
-                .content(this.content)
-                .board(board)
-                .build();
+            .userName(this.userName)
+            .userId(this.userId)
+            .content(this.content)
+            .board(board)
+            .build();
     }
 
     public CommentRequestDto setUserId(String userId) {
