@@ -24,7 +24,9 @@
 3. JPA와 QueryDSL을 사용하여 보다 안정적인 서버
 4. 도메인을 직관적으로
 5. 브랜치 전략
+6. Google-code-style 적용
 
 ## TODO
 1. 테스트 케이스 만들기
-2. Google-code-style 적용
+2. 로그백 활용하여 로깅 체계화
+3. AOP를 활용하여 로깅
