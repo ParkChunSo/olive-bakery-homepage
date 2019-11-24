@@ -1,13 +1,11 @@
 spring:
   profiles:
-    active: dev
+    active: local
+
 ---
 
 spring:
-  profiles: dev
-
-#  security:
-#    ignored: /swagger-resources/**
+  profiles: release
 
   datasource:
     url: jdbc:mysql://chunsodb.c04b2rx0gbkh.ap-northeast-2.rds.amazonaws.com:3306/olive_bakery?useSSL=false&serverTimezone=Asia/Seoul
@@ -25,8 +23,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 1MB
-      max-request-size: 1MB
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   http:
     encoding:
@@ -35,30 +33,31 @@ spring:
       force: true
 
 resources:
-#  image-locations: C:\\javaWork
   image-locations: /home/ec2-user/img/
   image-url: 15.164.57.47:8080
 
 logging:
   level:
     root: info
+  file: /home/ec2-user/log
 
 server:
   port: 8080
 
+
 ---
 
 spring:
-  profiles: test
+  profiles: local
 
   datasource:
     url: jdbc:mysql://localhost:3306/olive_bakery?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
     username: root
-    password: kim111
+    password: 1234
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       show-sql: true
 
     database: mysql
@@ -68,8 +67,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 1MB
-      max-request-size: 1MB
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   http:
     encoding:
@@ -78,13 +77,13 @@ spring:
       force: true
 
 resources:
-  #image-locations: /home/ec2-user/img/
-  image-locations: C:\Users\Kimyunsang\Desktop\spring\imageTest\
+  image-locations: C:\Users\chunso\Desktop\Temp\olive\img
   image-url: 127.0.0.1:8080
 
 logging:
   level:
     root: info
+  file: C:\Users\chunso\Desktop\Temp\olive\log
 
 server:
   port: 8080
