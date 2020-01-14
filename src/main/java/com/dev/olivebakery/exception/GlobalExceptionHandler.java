@@ -1,6 +1,6 @@
 package com.dev.olivebakery.exception;
 
-import com.dev.olivebakery.domain.dto.ErrorDto;
+import com.dev.olivebakery.domain.dtos.ErrorDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private UrlPathHelper urlPathHelper;
 
-    @ExceptionHandler(UserDefineException.class)
+//    @ExceptionHandler(UserDefineException.class)
     public ResponseEntity handleUserDefineException(HttpServletRequest request, UserDefineException e) {
         String requestURL = urlPathHelper.getOriginatingRequestUri(request);
 
@@ -31,8 +31,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logger.info("요청 HTTP 메소드 : " + request.getMethod());
         logger.info("요청 URL : " + requestURL);
         logger.info("클라이언트 : " + request.getRemoteHost());
-        logger.info("원본 에러 메세지 : " + e.getOriginalErrorMessage());
         logger.info("사용자 정의 에러 메세지 : " + e.getMessage());
+        logger.info("원본 에러 메세지 : " + e.getOriginalErrorMessage());
         logger.info("예외발생 메소드 : " + e.getErrorMethod());
         logger.info("Cause : " + e.getCause());
         logger.info("======================================");
@@ -41,13 +41,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         httpHeaders.set("Explanation", "RealEstate Service");
 
         return new ResponseEntity<>(ErrorDto.builder()
+                .userDefineErrorMessage(e.getMessage())
                 .originalErrorMessage(e.getOriginalErrorMessage())
-                .errorMessage(e.getMessage())
                 .requestURL(requestURL)
-                .build(), httpHeaders, HttpStatus.BAD_REQUEST);
+                .build(), httpHeaders, e.getErrorCode());
     }
 
-    @ExceptionHandler(Exception.class)
+//    @ExceptionHandler(Exception.class)
     public ResponseEntity handleException(HttpServletRequest request, Exception e) {
         String requestURL = urlPathHelper.getOriginatingRequestUri(request);
 
@@ -56,8 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logger.info("요청 HTTP 메소드 : " + request.getMethod());
         logger.info("요청 URL : " + requestURL);
         logger.info("클라이언트 : " + request.getRemoteHost());
-        logger.info("원본 에러 메세지 : " + e.getMessage());
-        logger.info("사용자 정의 에러 메세지 : " + e.getMessage());
+        logger.info("원본 에러 메세지 : " + e.toString());
         logger.info("Cause : " + e.getCause());
         logger.info("======================================");
 
@@ -65,8 +64,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         httpHeaders.set("Explanation", "RealEstate Service");
 
         return new ResponseEntity<>(ErrorDto.builder()
+                .userDefineErrorMessage("예상치 못한 예외 발생")
                 .originalErrorMessage(e.toString())
-                .errorMessage("예상치 못한 예외 발생")
                 .requestURL(requestURL)
                 .build(), httpHeaders, HttpStatus.BAD_REQUEST);
     }

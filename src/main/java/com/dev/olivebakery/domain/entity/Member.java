@@ -1,6 +1,22 @@
 package com.dev.olivebakery.domain.entity;
 
+import com.dev.olivebakery.domain.dtos.sign.SignUpRequestDto;
 import com.dev.olivebakery.domain.enums.MemberRole;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,57 +24,70 @@ import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "member_tbl")
 public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(unique = true)
-    private String email;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long uuid;
 
-    private String pw;
+  @Column(unique = true)
+  private String id;
 
-    private String name;
+  private String pw;
 
-    @Column(name = "phone_num")
-    private String phoneNumber;
+  private String name;
 
-    private int stamp;
+  @Column(name = "phone_num")
+  private String phoneNumber;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(value = EnumType.STRING)
-    private Set<MemberRole> role;
+  // true면 남자
+  private boolean isMale;
 
-    @OneToMany(mappedBy = "member")
-    private List<Reservation> reservations = new ArrayList<>();
+  private int age;
 
-    @OneToMany(mappedBy = "member" ,fetch = FetchType.LAZY)
-    private List<Board> boards = new ArrayList<>();
+  // 10000원 이상 구매시 +1
+  private int stamp;
 
-    @Builder
-    public Member(String email, String pw, String name, String phoneNumber, int stamp){
-        this.email = email;
-        this.pw = pw;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.stamp = stamp;
-    }
+  @ElementCollection(fetch = FetchType.EAGER)
+  @Enumerated(value = EnumType.STRING)
+  private Set<MemberRole> role;
 
-    public User toUser(){
-        return new User(email, pw
-                , role.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                    .collect(Collectors.toSet()));
-    }
+  @OneToMany(mappedBy = "member")
+  private List<Reservation> reservations = new ArrayList<>();
+
+  @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+  private List<Board> boards = new ArrayList<>();
+
+  @Builder
+  public Member(String id, String pw, String name, String phoneNumber, boolean isMale, int age,
+      int stamp) {
+    this.id = id;
+    this.pw = pw;
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.isMale = isMale;
+    this.age = age;
+    this.stamp = stamp;
+  }
+
+  public User toUser() {
+    return new User(id, pw
+        , role.stream()
+        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+        .collect(Collectors.toSet()));
+  }
+
+  public Member update(SignUpRequestDto dto) {
+    this.id = dto.getId();
+    this.name = dto.getName();
+    this.pw = dto.getPw();
+    this.phoneNumber = dto.getPhoneNumber();
+
+    return this;
+  }
 }

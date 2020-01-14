@@ -1,10 +1,16 @@
 package com.dev.olivebakery.domain.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 /**
  * Created by YoungMan on 2019-02-12.
@@ -16,17 +22,17 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Favorite {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long favoriteId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long favoriteId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
-    private Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "uuid")
+  private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bread_id")
-    private Bread bread;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "bread_id")
+  private Bread bread;
 
-    private Integer page;
+  private Integer page;
 }

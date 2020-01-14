@@ -1,27 +1,30 @@
 spring:
   profiles:
-    active: test
+    active: local
 
 ---
-spring:
-  profiles: local
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
 
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    open-in-view: true
+spring:
+  profiles: release
 
   datasource:
     url: jdbc:mysql://chunsodb.c04b2rx0gbkh.ap-northeast-2.rds.amazonaws.com:3306/olive_bakery?useSSL=false&serverTimezone=Asia/Seoul
     username: chunso
     password: alswjd96
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
+
   servlet:
     multipart:
-      max-file-size: 1MB
-      max-request-size: 1MB
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   http:
     encoding:
@@ -29,12 +32,58 @@ spring:
       enabled: true
       force: true
 
-  resources:
-    static-locations: file:///C:\Users\Kimyunsang\Desktop\spring\imageTest
+resources:
+  image-locations: /home/ec2-user/img/
+  image-url: 15.164.57.47:8080
 
 logging:
   level:
     root: info
+  file: /home/ec2-user/log
+
+server:
+  port: 8080
+
+
+---
+
+spring:
+  profiles: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/olive_bakery?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
+
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  http:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+
+resources:
+  image-locations: C:\Users\chunso\Desktop\Temp\olive\img
+  image-url: 127.0.0.1:8080
+
+logging:
+  level:
+    root: info
+  file: C:\Users\chunso\Desktop\Temp\olive\log
 
 server:
   port: 8080
